@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hybrid Reasoning — Build Session</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B1F3A; --purple: #7F77DD; --purple-dark: #534AB7; --purple-bg: #EEEDFE;
+    --amber: #854F0B; --amber-bg: #FAEEDA; --green: #3B6D11; --green-bg: #EAF3DE;
+    --coral: #993C1D; --coral-bg: #FAECE7; --blue: #185FA5; --blue-bg: #E6F1FB;
+    --bg: #F0F2F7; --card: #FFFFFF; --text: #0B1F3A; --text-2: #4A5568; --text-3: #718096; --border: rgba(0,0,0,0.08);
+  }
+  html, body { min-height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--navy); padding: 0 3rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 15px; font-weight: 600; color: #fff; }
+  .logo span { color: var(--purple); }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .hero { background: var(--navy); padding: 3.5rem 3rem 2.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .hero-tag { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--purple); margin-bottom: 10px; }
+  .hero-title { font-size: 32px; font-weight: 600; color: #fff; margin-bottom: 10px; line-height: 1.2; }
+  .hero-sub { font-size: 15px; color: rgba(255,255,255,0.45); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+  .content { max-width: 860px; margin: 2.5rem auto; padding: 0 2rem 3rem; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; margin-top: 2rem; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .nav-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); padding: 1.25rem 1.5rem; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 14px; transition: all .18s; }
+  .nav-card:hover { border-color: var(--purple); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(127,119,221,0.12); }
+  .card-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-content { flex: 1; }
+  .card-num { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 3px; }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .card-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .card-arrow { font-size: 16px; color: var(--text-3); transition: all .18s; }
+  .nav-card:hover .card-arrow { transform: translateX(4px); color: var(--purple); }
+  .exec-card { background: var(--navy); border-radius: 14px; padding: 1.5rem; text-decoration: none; display: flex; align-items: center; gap: 16px; transition: all .18s; margin-top: 14px; }
+  .exec-card:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(11,31,58,0.3); }
+  .exec-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(127,119,221,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .exec-content { flex: 1; }
+  .exec-tag { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: 4px; }
+  .exec-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .exec-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .exec-arrow { font-size: 20px; color: var(--purple); }
+  footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--text-3); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Hybrid <span>Reasoning</span></div>
+  <div class="header-sub">Order Details Agent — Build Session</div>
+</header>
+<div class="hero">
+  <div class="hero-tag">Agentforce Build Session</div>
+  <div class="hero-title">From plain English to AgentScript</div>
+  <div class="hero-sub">Walk through each topic — how it was designed, what the LLM owns, what the script enforces.</div>
+</div>
+<div class="content">
+  <div class="section-label">Build along — one topic at a time</div>
+  <div class="grid-4">
+    <a class="nav-card" href="02-verification.html">
+      <div class="card-icon" style="background:var(--amber-bg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Topic 1</div>
+        <div class="card-title">Identity check</div>
+        <div class="card-desc">Collect email → verify → success or retry/case</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="nav-card" href="03-order.html">
+      <div class="card-icon" style="background:var(--green-bg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Topic 2</div>
+        <div class="card-title">Order status</div>
+        <div class="card-desc">Get number → resolve → fetch → follow-ups</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="nav-card" href="04-case.html">
+      <div class="card-icon" style="background:var(--coral-bg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#993C1D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Topic 3</div>
+        <div class="card-title">Case management</div>
+        <div class="card-desc">Verification or expedite/cancel → submit → reset</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="nav-card" href="05-topic-selector.html">
+      <div class="card-icon" style="background:var(--purple-bg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Topic 4</div>
+        <div class="card-title">Agent router</div>
+        <div class="card-desc">Route every message → resume interrupted flows</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+  <div class="section-label">Resources</div>
+
+  <div class="grid-4">
+    <a class="nav-card" href="07-script.html">
+      <div class="card-icon" style="background:#1E2A3A">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Reference</div>
+        <div class="card-title">Full AgentScript</div>
+        <div class="card-desc">View and copy the complete script with syntax highlighting</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="nav-card" href="https://login.salesforce.com/packaging/installPackage.apexp?p0=04tHs000000LOdt" target="_blank">
+      <div class="card-icon" style="background:var(--purple-bg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      </div>
+      <div class="card-content">
+        <div class="card-num">Salesforce</div>
+        <div class="card-title">Install package</div>
+        <div class="card-desc">Install the Agentforce actions into any Salesforce org</div>
+      </div>
+      <div class="card-arrow">↗</div>
+    </a>
+  </div>
+  <a class="exec-card" href="06-execution.html">
+    <div class="exec-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </div>
+    <div class="exec-content">
+      <div class="exec-tag">Execution mode</div>
+      <div class="exec-title">Watch the agent run end to end</div>
+      <div class="exec-desc">Pick a scenario — happy path, verification failure, expedite, off-topic — and watch every topic light up in sequence as the conversation flows through the agent.</div>
+    </div>
+    <div class="exec-arrow">→</div>
+  </a>
+</div>
+<footer>Use ← → arrow keys to navigate within each topic</footer>
+</body>
+</html>

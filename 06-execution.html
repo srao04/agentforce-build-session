@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Execution Mode</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0B1F3A; --purple: #7F77DD; --purple-dark: #534AB7; --purple-bg: #EEEDFE;
+  --blue: #185FA5; --blue-bg: #E6F1FB; --green: #3B6D11; --green-bg: #EAF3DE;
+  --amber: #854F0B; --amber-bg: #FAEEDA; --coral: #993C1D; --coral-bg: #FAECE7;
+  --teal: #0F6E56; --teal-bg: #E1F5EE;
+  --bg: #F0F2F7; --card: #fff; --text: #0B1F3A; --text-2: #4A5568; --text-3: #718096; --border: rgba(0,0,0,0.08);
+}
+html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+.shell { display: grid; grid-template-rows: 60px 52px 1fr 60px; height: 100vh; }
+
+/* Header */
+header { background: var(--navy); display: flex; align-items: center; padding: 0 1.5rem; gap: 1.5rem; }
+.back { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.1); transition: all .15s; white-space: nowrap; }
+.back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.page-title { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; }
+.scenario-pills { display: flex; gap: 5px; flex: 1; justify-content: center; overflow-x: auto; padding: 4px 0; }
+.sc-pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all .2s; white-space: nowrap; flex-shrink: 0; }
+.sc-pill:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+.sc-pill.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* Step bar */
+.stepbar { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; padding: 0 1.5rem; gap: 12px; }
+.step-track { flex: 1; display: flex; gap: 4px; align-items: center; }
+.step-dot { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); transition: all .3s; cursor: pointer; flex: 1; }
+.step-dot.done { background: rgba(127,119,221,0.6); }
+.step-dot.active { background: var(--purple); }
+.step-label { font-size: 11px; color: rgba(255,255,255,0.4); white-space: nowrap; min-width: 60px; text-align: right; }
+
+/* Main split */
+main { display: grid; grid-template-columns: 300px 1fr; overflow: hidden; }
+
+/* Left — flowchart */
+.flow-panel { background: var(--card); border-right: 1px solid var(--border); overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+.flow-hint { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 12px; text-align: center; }
+
+.fnode { border-radius: 8px; padding: 8px 12px; text-align: center; font-size: 11px; font-weight: 500; border: 2px solid transparent; cursor: default; transition: all .3s; width: 140px; }
+.fnode sub { font-size: 10px; font-weight: 400; display: block; opacity: .7; margin-top: 2px; }
+.fn-gray  { background: #F7F8FA; border-color: #E5E7EB; color: #6B7280; }
+.fn-purple{ background: var(--purple-bg); border-color: #C4B8F8; color: var(--purple-dark); }
+.fn-amber { background: var(--amber-bg); border-color: #F9C67A; color: var(--amber); }
+.fn-green { background: var(--green-bg); border-color: #A8D572; color: var(--green); }
+.fn-coral { background: var(--coral-bg); border-color: #F0997B; color: var(--coral); }
+.fn-teal  { background: var(--teal-bg); border-color: #5DCAA5; color: var(--teal); }
+
+.fnode.lit { border-color: currentColor !important; box-shadow: 0 0 0 3px rgba(127,119,221,0.25); transform: scale(1.04); z-index: 2; position: relative; }
+.fnode.fn-amber.lit { box-shadow: 0 0 0 3px rgba(186,117,23,0.25); }
+.fnode.fn-green.lit { box-shadow: 0 0 0 3px rgba(59,109,17,0.25); }
+.fnode.fn-coral.lit { box-shadow: 0 0 0 3px rgba(216,90,48,0.25); }
+.fnode.fn-teal.lit  { box-shadow: 0 0 0 3px rgba(29,158,117,0.25); }
+
+.arr { display: flex; align-items: center; justify-content: center; height: 16px; color: #CBD5E0; font-size: 14px; }
+.arr-lbl { font-size: 9px; color: #9CA3AF; font-style: italic; text-align: center; margin: 1px 0; }
+.branches { display: flex; gap: 6px; align-items: flex-start; width: 100%; justify-content: center; }
+.branch { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.b-lbl { font-size: 9px; color: #9CA3AF; font-style: italic; margin-bottom: 2px; }
+
+/* Right — conversation */
+.conv-panel { display: flex; flex-direction: column; overflow: hidden; }
+.conv-header { padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--card); }
+.scenario-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+.scenario-desc  { font-size: 12px; color: var(--text-3); }
+.conv-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Conversation bubbles */
+.msg { max-width: 78%; }
+.msg.user { align-self: flex-end; }
+.msg.agent { align-self: flex-start; }
+.msg-label { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.msg.user .msg-label { text-align: right; }
+.bubble { border-radius: 12px; padding: 10px 14px; font-size: 13px; line-height: 1.55; }
+.msg.user .bubble { background: var(--navy); color: #fff; border-bottom-right-radius: 3px; }
+.msg.agent .bubble { background: var(--card); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 3px; }
+
+/* System event */
+.sys-event { align-self: center; display: flex; align-items: center; gap: 8px; background: #F7F8FA; border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 11px; color: var(--text-3); }
+.sys-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Topic badge */
+.topic-badge { align-self: center; display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid; }
+
+/* Step detail */
+.step-detail { padding: 10px 20px; border-top: 1px solid var(--border); background: #F7F8FA; flex-shrink: 0; }
+.detail-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.detail-item { font-size: 12px; color: var(--text-2); }
+.detail-item strong { font-weight: 600; color: var(--text); }
+
+/* Footer */
+footer { background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; }
+.key-hint { font-size: 12px; color: rgba(255,255,255,0.28); }
+.key-hint kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 1px 6px; font-family: 'DM Mono', monospace; font-size: 11px; }
+.nav-btns { display: flex; gap: 8px; }
+.nav-btn { padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); }
+.nav-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.nav-btn.primary { background: var(--purple); border-color: var(--purple); color: #fff; }
+.nav-btn.primary:hover { background: var(--purple-dark); }
+.nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+.replay-btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+.replay-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header>
+  <a class="back" href="index.html">← Back</a>
+  <span class="page-title">Execution mode</span>
+  <div class="scenario-pills" id="scenarioPills"></div>
+</header>
+
+<div class="stepbar">
+  <div class="step-track" id="stepTrack"></div>
+  <div class="step-label" id="stepLabel">Step 1 / 1</div>
+</div>
+
+<main>
+  <!-- LEFT: flowchart -->
+  <div class="flow-panel">
+    <div class="flow-hint">Active topic lights up</div>
+
+    <div class="fnode fn-gray" id="fn-start">Session<sub>start</sub></div>
+    <div class="arr">↓</div>
+    <div class="fnode fn-purple" id="fn-router">Agent router<sub>routes every message</sub></div>
+
+    <div class="branches" style="margin-top:6px;width:100%">
+      <div class="branch">
+        <div class="b-lbl">General</div>
+        <div class="fnode fn-teal" id="fn-faq" style="width:110px;font-size:10px">General FAQ<sub>answers directly</sub></div>
+      </div>
+      <div class="branch">
+        <div class="b-lbl">Off topic</div>
+        <div class="fnode fn-gray" id="fn-offtopic" style="width:110px;font-size:10px">Off topic<sub>redirects</sub></div>
+      </div>
+      <div class="branch">
+        <div class="b-lbl">Order</div>
+        <div class="fnode fn-amber" id="fn-verify">Identity check<sub>verify before order</sub></div>
+        <div class="arr">↓</div>
+        <div class="branches" style="width:130px">
+          <div class="branch">
+            <div class="b-lbl" style="font-size:8px">Fail</div>
+            <div class="fnode fn-coral" id="fn-cannotverify" style="width:60px;font-size:9px;padding:6px 4px">Cannot verify</div>
+          </div>
+          <div class="branch">
+            <div class="b-lbl" style="font-size:8px">Pass</div>
+            <div class="fnode fn-green" id="fn-order" style="width:60px;font-size:9px;padding:6px 4px">Order status</div>
+            <div class="arr" style="font-size:11px">↓</div>
+            <div class="fnode fn-coral" id="fn-case" style="width:60px;font-size:9px;padding:6px 4px">Case mgmt</div>
+          </div>
+        </div>
+        <div class="arr">↓</div>
+        <div class="fnode fn-gray" id="fn-end" style="width:130px;font-size:10px">Session ends<sub>all variables cleared</sub></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: conversation -->
+  <div class="conv-panel">
+    <div class="conv-header">
+      <div class="scenario-title" id="scenarioTitle">Select a scenario</div>
+      <div class="scenario-desc" id="scenarioDesc">Choose a path above to watch the agent run</div>
+    </div>
+    <div class="conv-body" id="convBody">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:13px;text-align:center">
+        Pick a scenario above to start
+      </div>
+    </div>
+    <div class="step-detail" id="stepDetail" style="display:none">
+      <div class="detail-row" id="detailRow"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span class="key-hint"><kbd>←</kbd> <kbd>→</kbd> arrow keys</span>
+  <div class="nav-btns">
+    <button class="replay-btn" id="btnReplay" onclick="replay()">↺ Replay</button>
+    <button class="nav-btn" id="btnPrev" onclick="stepDir(-1)" disabled>← Previous</button>
+    <button class="nav-btn primary" id="btnNext" onclick="stepDir(1)" disabled>Next →</button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+const NODES = ['fn-start','fn-router','fn-faq','fn-offtopic','fn-verify','fn-cannotverify','fn-order','fn-case','fn-end'];
+
+function clearLit() { NODES.forEach(id => document.getElementById(id)?.classList.remove('lit')); }
+function light(ids) { clearLit(); (Array.isArray(ids)?ids:[ids]).forEach(id => document.getElementById(id)?.classList.add('lit')); }
+
+function userMsg(text) { return `<div class="msg user"><div class="msg-label">User</div><div class="bubble">${text}</div></div>`; }
+function agentMsg(text) { return `<div class="msg agent"><div class="msg-label">Agent</div><div class="bubble">${text}</div></div>`; }
+function sysEvent(text, color) { return `<div class="sys-event"><div class="sys-dot" style="background:${color||'#9CA3AF'}"></div>${text}</div>`; }
+function topicBadge(name, bg, border, color) { return `<div class="topic-badge" style="background:${bg};border-color:${border};color:${color}">${name}</div>`; }
+
+const scenarios = [
+  {
+    id: 'happy',
+    label: 'Happy path',
+    title: 'Happy path — order lookup end to end',
+    desc: 'User asks about an order, verifies successfully, gets order details, then is done.',
+    steps: [
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg('Hi, I need to check on an order'),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('Router reads intent — order related → route to identity check', '#7F77DD')
+      ], detail: { active: 'Agent router', doing: 'Classifying user intent', variable: 'workflow_step = ""' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        topicBadge('Identity check', '#FAEEDA', '#F9C67A', '#854F0B'),
+        sysEvent('before_reasoning: set workflow_step = "Identify User"', '#854F0B'),
+        sysEvent('isVerified == False — no fast path', '#854F0B'),
+        agentMsg('To access order details I will need to verify your identity. Could you please provide your email address?')
+      ], detail: { active: 'Identity check', doing: 'Requesting email', variable: 'workflow_step = "Identify User"' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        userMsg('john.doe@corning.com'),
+        sysEvent('UserEmail set → Verification_Run == False → triggering OrderDetails_Verify_User', '#854F0B'),
+        sysEvent('Flow runs... result: Verified_status = True', '#3B6D11'),
+        sysEvent('isVerified = True, Verification_Run = True', '#3B6D11'),
+        agentMsg('Great news, I have successfully verified your identity!'),
+        sysEvent('after_reasoning: isVerified == True → transition to Order_Status', '#854F0B')
+      ], detail: { active: 'Identity check', doing: 'Running verification flow', variable: 'isVerified = True' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        topicBadge('Order status', '#EAF3DE', '#A8D572', '#3B6D11'),
+        sysEvent('before_reasoning: set workflow_step = "Order Status"', '#3B6D11'),
+        agentMsg('Please provide the order number you would like to look up.')
+      ], detail: { active: 'Order status', doing: 'Requesting order number', variable: 'workflow_step = "Order Status"' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        userMsg('ORD-2024-8821'),
+        sysEvent('InputOrderNumber set → GetExactOrderNumber running...', '#3B6D11'),
+        sysEvent('ExactOrderNumber = "0000ORD-2024-8821-COR"', '#3B6D11'),
+        sysEvent('GetOrderDetails running...', '#3B6D11'),
+        sysEvent('OrderDetails loaded', '#3B6D11'),
+        agentMsg('Here are the details for order 0000ORD-2024-8821-COR:<br><br>Status: In transit<br>Items: 3 × Optical Fiber Cable (Part #OFC-440)<br>Ship date: April 14 2026<br>Est. delivery: April 22 2026<br>Tracking: UPS 1Z9999W99999999999')
+      ], detail: { active: 'Order status', doing: 'GetExactOrderNumber → GetOrderDetails', variable: 'ExactOrderNumber + OrderDetails set' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        agentMsg('Please let me know if you have any follow up questions about this order, or if you would like to expedite your order, cancel your order, or look up another order.'),
+        userMsg('What is the estimated delivery date?'),
+        agentMsg('The estimated delivery date for this order is April 22, 2026.')
+      ], detail: { active: 'Order status', doing: 'Answering from stored OrderDetails — no API call', variable: 'OrderDetails read (no re-fetch)' }},
+      { nodes: ['fn-end'], topic: null, messages: [
+        userMsg("That's all I need, thanks"),
+        sysEvent('LLM interprets intent → reset_order_variables + set_Workflowstep called', '#9CA3AF'),
+        agentMsg('Let me know if there is anything else I can help you with.'),
+        sysEvent('All order variables cleared. workflow_step = ""', '#9CA3AF')
+      ], detail: { active: 'Order status', doing: 'User done — LLM resets variables', variable: 'InputOrderNumber, ExactOrderNumber, OrderDetails, workflow_step all cleared' }}
+    ]
+  },
+  {
+    id: 'retry',
+    label: 'Verify → retry → success',
+    title: 'Verification failure → retry → success',
+    desc: 'User fails verification, chooses to try again with a different email, then succeeds.',
+    steps: [
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg('I need to look up an order'),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('Order related → route to identity check', '#7F77DD')
+      ], detail: { active: 'Agent router', doing: 'Routing to identity check', variable: '' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        topicBadge('Identity check', '#FAEEDA', '#F9C67A', '#854F0B'),
+        sysEvent('before_reasoning: workflow_step = "Identify User"', '#854F0B'),
+        agentMsg('To access order details I will need to verify your identity. Could you please provide your email address?')
+      ], detail: { active: 'Identity check', doing: 'Requesting email', variable: 'workflow_step = "Identify User"' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        userMsg('j.doe@wrongdomain.com'),
+        sysEvent('UserEmail set → triggering OrderDetails_Verify_User', '#854F0B'),
+        sysEvent('Flow result: Verified_status = False', '#993C1D'),
+        sysEvent('isVerified = False, Verification_Run = True', '#993C1D'),
+        agentMsg("I'm sorry, I wasn't able to verify your identity with the information provided. Would you like to try again or create a case?")
+      ], detail: { active: 'Identity check', doing: 'Verification failed', variable: 'isVerified = False' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        userMsg("Let me try again with my work email"),
+        sysEvent('LLM interprets intent as retry (not exact words)', '#854F0B'),
+        sysEvent('set_email: UserEmail = ""', '#854F0B'),
+        sysEvent('set_isVerified: isVerified = False', '#854F0B'),
+        sysEvent('set_run_verification: Verification_Run = False', '#854F0B'),
+        agentMsg("No problem! Let's try again. Could you please provide your email address?")
+      ], detail: { active: 'Identity check', doing: 'LLM interprets retry intent — resets 3 variables', variable: 'UserEmail, isVerified, Verification_Run all reset' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        userMsg('john.doe@corning.com'),
+        sysEvent('UserEmail set → Verification_Run == False → re-running flow', '#854F0B'),
+        sysEvent('Flow result: Verified_status = True', '#3B6D11'),
+        agentMsg('Great news, I have successfully verified your identity!'),
+        sysEvent('after_reasoning: isVerified == True → transition to Order_Status', '#854F0B')
+      ], detail: { active: 'Identity check', doing: 'Verification succeeded on retry', variable: 'isVerified = True' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        topicBadge('Order status', '#EAF3DE', '#A8D572', '#3B6D11'),
+        sysEvent('before_reasoning: workflow_step = "Order Status"', '#3B6D11'),
+        agentMsg('Please provide the order number you would like to look up.')
+      ], detail: { active: 'Order status', doing: 'Verification complete — now in order lookup', variable: 'workflow_step = "Order Status"' }}
+    ]
+  },
+  {
+    id: 'verifycase',
+    label: 'Verify → create case',
+    title: 'Verification failure → create case',
+    desc: 'User cannot be verified and asks to raise a support case.',
+    steps: [
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg('I need to check my order'),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('Order related → route to identity check', '#7F77DD')
+      ], detail: { active: 'Agent router', doing: 'Routing to identity check', variable: '' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        topicBadge('Identity check', '#FAEEDA', '#F9C67A', '#854F0B'),
+        sysEvent('before_reasoning: workflow_step = "Identify User"', '#854F0B'),
+        agentMsg('To access order details I will need to verify your identity. Could you please provide your email address?')
+      ], detail: { active: 'Identity check', doing: 'Requesting email', variable: 'workflow_step = "Identify User"' }},
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        userMsg('unknown@email.com'),
+        sysEvent('OrderDetails_Verify_User flow runs → Verified_status = False', '#993C1D'),
+        agentMsg("I'm sorry, I wasn't able to verify your identity with the information provided. Would you like to try again or create a case?")
+      ], detail: { active: 'Identity check', doing: 'Verification failed', variable: 'isVerified = False' }},
+      { nodes: ['fn-cannotverify','fn-case'], topic: 'coral', messages: [
+        userMsg('Just open a ticket for me'),
+        sysEvent('LLM interprets intent as create case', '#993C1D'),
+        sysEvent('set_CaseType: CaseType = "verification_issue"', '#993C1D'),
+        sysEvent('go_to_Case_Management transition fires', '#993C1D'),
+        topicBadge('Case management', '#FAECE7', '#F0997B', '#993C1D'),
+        sysEvent('before_reasoning: workflow_step = "Case Management"', '#993C1D'),
+        sysEvent('CaseType == "verification_issue" → OrderDetails_CreateVerificationCase runs', '#993C1D'),
+        sysEvent('CaseNum = "CS-20260419-0042"', '#3B6D11'),
+        agentMsg('Your verification case has been successfully created. Your case number is CS-20260419-0042. A member of our support team will reach out to you shortly.')
+      ], detail: { active: 'Case management', doing: 'CreateVerificationCase flow runs', variable: 'CaseType = "verification_issue"' }},
+      { nodes: ['fn-end'], topic: null, messages: [
+        sysEvent('after_reasoning: all variables cleared', '#9CA3AF'),
+        sysEvent('workflow_step, CaseType, casenum, casestatus — all reset', '#9CA3AF')
+      ], detail: { active: 'Case management', doing: 'after_reasoning resets 7 variables', variable: 'Full reset — agent ready for fresh start' }}
+    ]
+  },
+  {
+    id: 'expedite',
+    label: 'Order → expedite',
+    title: 'Order lookup → expedite request → case',
+    desc: 'Verified user looks up an order then asks to expedite it.',
+    steps: [
+      { nodes: ['fn-verify'], topic: 'amber', messages: [
+        topicBadge('Identity check', '#FAEEDA', '#F9C67A', '#854F0B'),
+        sysEvent('User already verified in this session — isVerified = True', '#3B6D11'),
+        sysEvent('before_reasoning: isVerified == True → skip to Order_Status', '#854F0B'),
+        agentMsg('Great news, I have successfully verified your identity!')
+      ], detail: { active: 'Identity check', doing: 'before_reasoning fast-path — already verified', variable: 'isVerified = True (from previous session step)' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        topicBadge('Order status', '#EAF3DE', '#A8D572', '#3B6D11'),
+        agentMsg('Please provide the order number you would like to look up.'),
+        userMsg('ORD-2024-5510'),
+        sysEvent('GetExactOrderNumber → GetOrderDetails both run', '#3B6D11'),
+        agentMsg('Here are the details for ORD-2024-5510:<br><br>Status: Processing<br>Items: 12 × Gorilla Glass panels<br>Ship date: April 28 2026<br>Est. delivery: May 5 2026')
+      ], detail: { active: 'Order status', doing: 'Two API calls run sequentially', variable: 'ExactOrderNumber + OrderDetails set' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        userMsg('Can you expedite this? I need it by April 25th'),
+        sysEvent('LLM interprets intent as expedite request', '#3B6D11'),
+        sysEvent('set_CaseType: CaseType = "Expedite or cancel"', '#3B6D11'),
+        sysEvent('go_to_Case_Management fires', '#3B6D11')
+      ], detail: { active: 'Order status', doing: 'LLM interprets expedite intent — sets CaseType', variable: 'CaseType = "Expedite or cancel"' }},
+      { nodes: ['fn-case'], topic: 'coral', messages: [
+        topicBadge('Case management', '#FAECE7', '#F0997B', '#993C1D'),
+        sysEvent('CaseType == "Expedite or cancel" → OrderDetails_CreateExpediteCancelCase runs', '#993C1D'),
+        sysEvent('Inputs: CaseType, ExactOrderNumber, UserEmail', '#993C1D'),
+        sysEvent('Case_num = "EXP-20260419-0018"', '#3B6D11'),
+        agentMsg('Your case has been successfully created. Your case number is EXP-20260419-0018. A member of our support team will reach out to you shortly.')
+      ], detail: { active: 'Case management', doing: 'CreateExpediteCancelCase runs with order + email', variable: 'casenum = "EXP-20260419-0018"' }},
+      { nodes: ['fn-end'], topic: null, messages: [
+        sysEvent('after_reasoning: 7 variables cleared', '#9CA3AF'),
+        sysEvent('workflow_step, CaseType, InputOrderNumber, ExactOrderNumber, OrderDetails, casenum, casestatus all reset', '#9CA3AF')
+      ], detail: { active: 'Case management', doing: 'Full reset after case confirmed', variable: 'All variables cleared' }}
+    ]
+  },
+  {
+    id: 'general',
+    label: 'General question',
+    title: 'General question — no auth needed',
+    desc: 'User asks a product question. No verification required — answered directly.',
+    steps: [
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg("What is Gorilla Glass used for?"),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('No active workflow_step', '#7F77DD'),
+        sysEvent('Intent: general product question → go_to_GeneralFAQ', '#7F77DD')
+      ], detail: { active: 'Agent router', doing: 'No order intent → routes to GeneralFAQ', variable: 'No variables needed' }},
+      { nodes: ['fn-faq'], topic: 'teal', messages: [
+        topicBadge('General FAQ', '#E1F5EE', '#5DCAA5', '#0F6E56'),
+        agentMsg('Gorilla Glass is a chemically strengthened glass developed by Corning, part of the Specialty Materials segment. It is primarily used as a cover glass on smartphones, tablets, laptops, and wearables to provide scratch and drop resistance. The latest generations also offer improved optical clarity and thinner profiles for foldable devices.')
+      ], detail: { active: 'General FAQ', doing: 'Answering from built-in knowledge — no actions called', variable: 'No variables set or read' }},
+      { nodes: ['fn-faq'], topic: 'teal', messages: [
+        userMsg('What other products does Corning make?'),
+        agentMsg("Corning operates across five business segments: Display Technologies (glass for flat panel displays), Optical Communications (fiber optic cables and connectivity), Specialty Materials (Gorilla Glass and advanced optics), Environmental Technologies (ceramic substrates for catalytic converters), and Life Sciences (lab equipment and cell culture products).")
+      ], detail: { active: 'General FAQ', doing: 'Follow-up answered from knowledge — no re-routing', variable: '' }}
+    ]
+  },
+  {
+    id: 'offtopic',
+    label: 'Off topic',
+    title: 'Off-topic request → redirect',
+    desc: 'User asks something unrelated. Agent redirects without revealing system information.',
+    steps: [
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg("What's the weather in New York today?"),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('No active workflow_step', '#7F77DD'),
+        sysEvent('Intent: unrelated to company → go_to_off_topic', '#7F77DD')
+      ], detail: { active: 'Agent router', doing: 'Off-topic intent → routes to off_topic', variable: '' }},
+      { nodes: ['fn-offtopic'], topic: 'gray', messages: [
+        topicBadge('Off topic', '#F1EFE8', '#D3D1C7', '#5F5E5A'),
+        agentMsg("I can only assist with questions related to Corning products and order information. How can I help you today?"),
+        sysEvent('No system information revealed. No topics or config disclosed.', '#9CA3AF')
+      ], detail: { active: 'Off topic', doing: 'Politely redirects — never answers, never reveals config', variable: '' }},
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg('OK, can you tell me about Gorilla Glass then?'),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('New message — router runs again on every turn', '#7F77DD'),
+        sysEvent('Intent: general product question → go_to_GeneralFAQ', '#7F77DD'),
+        topicBadge('General FAQ', '#E1F5EE', '#5DCAA5', '#0F6E56'),
+        agentMsg('Gorilla Glass is a chemically strengthened cover glass developed by Corning...')
+      ], detail: { active: 'Agent router → General FAQ', doing: 'Router runs on every message — correctly classifies second request', variable: '' }}
+    ]
+  },
+  {
+    id: 'resume',
+    label: 'Interrupted → resume',
+    title: 'Interrupted conversation → resume',
+    desc: 'User was mid-order-lookup when the session dropped. Returns and picks up exactly where they left off.',
+    steps: [
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        sysEvent('Previous session: user was in Order_Status', '#3B6D11'),
+        sysEvent('workflow_step = "Order Status" was set before interruption', '#3B6D11'),
+        sysEvent('Session dropped mid-conversation', '#993C1D')
+      ], detail: { active: 'Order status (previous session)', doing: 'Session interrupted — workflow_step preserved', variable: 'workflow_step = "Order Status" still set' }},
+      { nodes: ['fn-start','fn-router'], topic: null, messages: [
+        userMsg('Hello?'),
+        topicBadge('Agent router', '#EEEDFE', '#C4B8F8', '#534AB7'),
+        sysEvent('Router checks workflow_step first', '#7F77DD'),
+        sysEvent('workflow_step == "Order Status" → deterministic transition', '#7F77DD'),
+        sysEvent('LLM routing logic never runs — script fires immediately', '#534AB7')
+      ], detail: { active: 'Agent router', doing: 'workflow_step check fires before LLM reads message', variable: 'workflow_step = "Order Status"' }},
+      { nodes: ['fn-order'], topic: 'green', messages: [
+        topicBadge('Order status', '#EAF3DE', '#A8D572', '#3B6D11'),
+        sysEvent('Resumes in Order_Status — picks up mid-flow', '#3B6D11'),
+        agentMsg("Welcome back! I see we were in the middle of looking up an order. Please provide the order number you'd like to look up.")
+      ], detail: { active: 'Order status', doing: 'Resumed exactly where conversation left off', variable: 'No re-verification needed — isVerified still True' }}
+    ]
+  }
+];
+
+let curScenario = 0;
+let curStep = 0;
+
+function buildPills() {
+  const container = document.getElementById('scenarioPills');
+  scenarios.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-pill' + (i === 0 ? ' active' : '');
+    btn.textContent = s.label;
+    btn.onclick = () => loadScenario(i);
+    container.appendChild(btn);
+  });
+}
+
+function loadScenario(idx) {
+  curScenario = idx;
+  curStep = 0;
+  document.querySelectorAll('.sc-pill').forEach((p, i) => p.classList.toggle('active', i === idx));
+  const s = scenarios[idx];
+  document.getElementById('scenarioTitle').textContent = s.title;
+  document.getElementById('scenarioDesc').textContent = s.desc;
+  buildStepTrack(s.steps.length);
+  renderStep();
+}
+
+function buildStepTrack(count) {
+  const track = document.getElementById('stepTrack');
+  track.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot';
+    dot.onclick = () => { curStep = i; renderStep(); };
+    track.appendChild(dot);
+  }
+}
+
+function renderStep() {
+  const s = scenarios[curScenario];
+  const step = s.steps[curStep];
+
+  // Update step dots
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.toggle('done', i < curStep);
+    d.classList.toggle('active', i === curStep);
+  });
+  document.getElementById('stepLabel').textContent = `Step ${curStep + 1} / ${s.steps.length}`;
+
+  // Light up nodes
+  light(step.nodes);
+
+  // Build conversation — show all messages up to and including current step
+  const body = document.getElementById('convBody');
+  let html = '';
+  for (let i = 0; i <= curStep; i++) {
+    if (i > 0) html += `<div style="height:1px;background:var(--border);margin:4px 0"></div>`;
+    s.steps[i].messages.forEach(m => html += m);
+  }
+  body.innerHTML = html;
+  body.scrollTop = body.scrollHeight;
+
+  // Step detail bar
+  const detail = document.getElementById('stepDetail');
+  const detailRow = document.getElementById('detailRow');
+  if (step.detail && (step.detail.active || step.detail.doing)) {
+    detail.style.display = 'block';
+    let dhtml = '';
+    if (step.detail.active) dhtml += `<div class="detail-item"><strong>Active:</strong> ${step.detail.active}</div>`;
+    if (step.detail.doing)  dhtml += `<div class="detail-item"><strong>Doing:</strong> ${step.detail.doing}</div>`;
+    if (step.detail.variable) dhtml += `<div class="detail-item"><strong>Variables:</strong> ${step.detail.variable}</div>`;
+    detailRow.innerHTML = dhtml;
+  } else {
+    detail.style.display = 'none';
+  }
+
+  // Buttons
+  document.getElementById('btnPrev').disabled = curStep === 0;
+  document.getElementById('btnNext').disabled = curStep === s.steps.length - 1;
+  document.getElementById('btnNext').textContent = curStep === s.steps.length - 1 ? 'Done' : 'Next →';
+}
+
+function stepDir(d) {
+  const s = scenarios[curScenario];
+  const next = curStep + d;
+  if (next >= 0 && next < s.steps.length) { curStep = next; renderStep(); }
+}
+
+function replay() { curStep = 0; renderStep(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') stepDir(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   stepDir(-1);
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= scenarios.length) loadScenario(num - 1);
+});
+
+buildPills();
+loadScenario(0);
+</script>
+</body>
+</html>

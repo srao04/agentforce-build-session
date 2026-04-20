@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Check</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B1F3A; --purple: #7F77DD; --purple-dark: #534AB7; --purple-bg: #EEEDFE;
+    --blue: #185FA5; --blue-bg: #E6F1FB; --green: #3B6D11; --green-bg: #EAF3DE;
+    --amber: #854F0B; --amber-bg: #FAEEDA;
+    --bg: #F0F2F7; --card: #FFFFFF; --text: #0B1F3A; --text-2: #4A5568; --text-3: #718096; --border: rgba(0,0,0,0.08);
+  }
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+  .shell { display: grid; grid-template-rows: 60px 1fr 60px; height: 100vh; }
+  header { background: var(--navy); display: flex; align-items: center; padding: 0 2rem; gap: 1.5rem; }
+  .back { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.1); transition: all .15s; }
+  .back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .page-title { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+  .pills { display: flex; gap: 5px; flex: 1; justify-content: center; }
+  .pill { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .pill:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .pill.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+  main { overflow: hidden; position: relative; }
+  .slide { position: absolute; inset: 0; padding: 1.5rem 2rem; display: none; flex-direction: column; gap: 1rem; overflow-y: auto; }
+  .slide.active { display: flex; }
+  .slide-tag { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: 4px; }
+  .slide-title { font-size: 22px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .slide-sub { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  footer { background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; }
+  .key-hint { font-size: 12px; color: rgba(255,255,255,0.28); }
+  .key-hint kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 1px 6px; font-family: 'DM Mono', monospace; font-size: 11px; }
+  .nav-btns { display: flex; gap: 8px; }
+  .nav-btn { padding: 8px 22px; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); }
+  .nav-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .nav-btn.primary { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .nav-btn.primary:hover { background: var(--purple-dark); }
+  .nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+
+  pre { font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .hl-det { background: var(--purple-bg); color: var(--purple-dark); border-radius: 3px; padding: 1px 4px; }
+  .hl-llm { background: var(--blue-bg); color: var(--blue); border-radius: 3px; padding: 1px 4px; }
+
+  .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+  .card-head { padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); background: #F7F8FA; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .card-body { padding: 16px; overflow-y: auto; flex: 1; }
+
+  .legend { display: flex; gap: 20px; flex-shrink: 0; font-size: 12px; color: var(--text-2); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .dot-det { background: var(--purple-bg); border: 1.5px solid var(--purple-dark); }
+  .dot-llm { background: var(--blue-bg); border: 1.5px solid var(--blue); }
+
+  .anno-layout { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 0; flex: 1; min-height: 0; align-items: stretch; }
+  .code-col { display: flex; flex-direction: column; }
+  .arrow-col { display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 8px 0; position: relative; }
+  .anno-col { display: flex; flex-direction: column; gap: 6px; justify-content: space-around; }
+  .code-block { flex: 1; display: flex; align-items: center; padding: 10px 14px; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.65; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+  .code-block:last-child { margin-bottom: 0; }
+  .code-block.det { background: var(--purple-bg); border-color: #C4B8F8; color: var(--purple-dark); }
+  .code-block.llm { background: var(--blue-bg); border-color: #9AC5F0; color: var(--blue); }
+  .anno-card { flex: 1; padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.5; margin-bottom: 6px; display: flex; flex-direction: column; justify-content: center; }
+  .anno-card:last-child { margin-bottom: 0; }
+  .anno-card.det { background: var(--purple-bg); border-left: 3px solid var(--purple-dark); }
+  .anno-card.llm { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+  .anno-title { font-weight: 600; font-size: 12px; margin-bottom: 3px; }
+  .anno-card.det .anno-title { color: var(--purple-dark); }
+  .anno-card.llm .anno-title { color: var(--blue); }
+  .anno-body { font-size: 11.5px; color: var(--text-2); }
+
+  .s3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+  .block { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; }
+  .block:last-child { margin-bottom: 0; }
+  .block-tag { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 7px 14px; }
+  .bt-det { background: var(--purple-bg); color: var(--purple-dark); }
+  .bt-reason { background: #F7F8FA; color: var(--text-3); }
+  .bt-actions { background: var(--green-bg); color: var(--green); }
+  .block-body { background: var(--card); padding: 12px 14px; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .s3-annos { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .s3-anno { border-radius: 8px; padding: 11px 13px; font-size: 12px; line-height: 1.5; }
+  .s3-anno.det { background: var(--purple-bg); border-left: 3px solid var(--purple-dark); }
+  .s3-anno.neutral { background: #F7F8FA; border-left: 3px solid #D1D5DB; }
+  .s3-anno.green { background: var(--green-bg); border-left: 3px solid var(--green); }
+  .s3-anno .at { font-weight: 600; font-size: 12px; margin-bottom: 3px; }
+  .s3-anno.det .at { color: var(--purple-dark); }
+  .s3-anno.neutral .at { color: var(--text-2); }
+  .s3-anno.green .at { color: var(--green); }
+  .s3-anno .ab { font-size: 11.5px; color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <a class="back" href="index.html">← Back</a>
+    <span class="page-title">Identity check</span>
+    <div class="pills">
+      <button class="pill active" onclick="goTo(0)">Plain English</button>
+      <button class="pill" onclick="goTo(1)">What goes where</button>
+      <button class="pill" onclick="goTo(2)">Actions</button>
+      <button class="pill" onclick="goTo(3)">The structure</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- STAGE 1 -->
+    <div class="slide active" id="s0">
+      <div>
+        <div class="slide-tag">Step 1</div>
+        <div class="slide-title">Write it as plain English first</div>
+        <div class="slide-sub">Forget variables, conditions, and actions. Describe what this topic should do — in plain language, in order.</div>
+      </div>
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-head">Identity check — plain instructions</div>
+        <div class="card-body">
+          <pre>Your goal is to verify the user's identity before allowing access to order information.
+
+Work through these steps in order:
+
+1.  If you don't have the user's email yet, ask for it:
+    "To access order details I will need to verify your identity.
+     Could you please provide your email address?"
+
+2.  Once you have an email and haven't run verification yet,
+    run the identity verification check using their email address.
+
+3.  If verification succeeds, tell the user:
+    "Great news, I have successfully verified your identity!"
+    Then move them straight to order lookup.
+
+4.  If verification fails, say:
+    "I'm sorry, I wasn't able to verify your identity with the
+     information provided. Would you like to try again or create a case?"
+
+    —  If they say Try Again:
+       Clear the email, reset isVerified, reset Verification_Run,
+       and start from step 1.
+
+    —  If they say Create a Case (or any similar phrasing):
+       Record the case type as a verification issue and
+       transfer them to case management.</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 2 -->
+    <div class="slide" id="s1">
+      <div>
+        <div class="slide-tag">Step 2</div>
+        <div class="slide-title">What goes where</div>
+        <div class="slide-sub">Every line is either a deterministic guardrail or LLM conversation. The split determines the structure.</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot dot-det"></div> Deterministic — variable == value check</div>
+        <div class="legend-item"><div class="legend-dot dot-llm"></div> LLM — conversation or intent interpretation</div>
+      </div>
+      <div class="anno-layout" style="flex:1;min-height:0">
+        <div class="code-col">
+          <div class="code-block det">Set workflow_step = "Identify User"
+If already verified → skip to order lookup</div>
+          <div class="code-block det">If no email and not verified [condition]</div>
+          <div class="code-block llm">Ask the user for their email
+Capture what they provide</div>
+          <div class="code-block det">If email + not verified + not yet run [condition]
+→ trigger OrderDetails_Verify_User exactly once
+→ record result in isVerified
+→ set Verification_Run = True</div>
+          <div class="code-block det">If verified [condition]</div>
+          <div class="code-block llm">Tell the user: "Great news, I have successfully
+verified your identity!"</div>
+          <div class="code-block det">→ transition to Order_Status (guaranteed)</div>
+          <div class="code-block det">If not verified [variable == value check]</div>
+          <div class="code-block llm">Offer retry or case creation</div>
+          <div class="code-block llm">If user says "try again" [LLM interprets intent]
+User could say: "let me try", "try again",
+"let's try another email", "retry" — anything
+→ reset email, isVerified, Verification_Run</div>
+          <div class="code-block llm">If user says "create a case" [LLM interprets intent]
+User could say: "raise a case", "just log it",
+"open a ticket" — anything
+→ set_CaseType + go_to_Case_Management</div>
+        </div>
+        <div class="arrow-col" id="arrowCol"></div>
+        <div class="anno-col">
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — before reasoning</div>
+            <div class="anno-body">Stamps the workflow step for session recovery and fast-paths already-verified users before the LLM is called.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">If conditions in before/after_reasoning</div>
+            <div class="anno-body">Conditions in before/after_reasoning blocks are always system-enforced. Inside reasoning instructions, an if condition can also be LLM-interpreted — the LLM reads the variable and responds accordingly.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM — conversation</div>
+            <div class="anno-body">Asking, wording, and capturing the user's reply are conversational — the LLM handles these naturally.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — run exactly once</div>
+            <div class="anno-body">The verification flow must fire exactly once. The Verification_Run flag guarantees this — the LLM cannot re-run it or skip it.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">If condition inside reasoning</div>
+            <div class="anno-body">This checks isVerified inside reasoning instructions — the LLM reads the variable state and determines what to say next. In before/after_reasoning, this same check would be fully system-enforced.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM — conversation</div>
+            <div class="anno-body">The success message is conversational. The LLM delivers it.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — guaranteed transition</div>
+            <div class="anno-body">Moving to Order_Status after verification is never an LLM choice. It fires automatically in after_reasoning.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Two types of if conditions</div>
+            <div class="anno-body">This checks <code>isVerified == False</code> — an exact variable value. These are deterministic: the system evaluates the condition, not the LLM.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM — offer the options</div>
+            <div class="anno-body">Presenting the retry or case creation choice to the user is conversational — the LLM handles the wording naturally.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM-interpreted condition — intent not exact words</div>
+            <div class="anno-body">There is no exact value to check here. The user could say "let me try", "try again", "let's try another email", "retry" — or anything else that means the same thing. The LLM interprets the intent, then resets the flags and re-asks.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM-interpreted condition — intent not exact words</div>
+            <div class="anno-body">Same pattern — "raise a case", "open a ticket", "just log it" all mean the same thing. The LLM understands intent and selects set_CaseType + go_to_Case_Management regardless of phrasing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3 — ACTIONS -->
+    <div class="slide" id="s2">
+      <div>
+        <div class="slide-tag">Step 3</div>
+        <div class="slide-title">Actions</div>
+        <div class="slide-sub">Reasoning actions are tools the LLM picks from based on the conversation. Not everything that runs here is an action.</div>
+      </div>
+      <div class="s3-grid">
+        <div style="overflow-y:auto">
+          <div class="block">
+            <div class="block-tag bt-actions">Actions available for reasoning</div>
+            <div class="block-body">set_email
+    → LLM calls this to capture the user's email address
+
+set_isVerified
+    → LLM calls this to reset the verified flag on retry
+
+set_run_verification
+    → LLM calls this to reset Verification_Run on retry
+
+set_CaseType
+    → LLM calls this when user wants to create a case
+    → sets CaseType = "verification_issue"
+
+go_to_Case_Management
+    → LLM calls this to transition to Case_Management
+
+go_to_order_status
+    → LLM calls this if needed to transition to Order_Status</div>
+          </div>
+          <div class="block" style="margin-top:10px">
+            <div class="block-tag" style="background:#FAEEDA;color:#854F0B;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;">Not in reasoning actions</div>
+            <div class="block-body" style="color:#854F0B">OrderDetails_Verify_User
+
+    This is a topic-level action — it runs
+    deterministically via script conditions.
+    The LLM never decides whether to call it.
+    The if condition triggers it automatically
+    when email is present and the flow hasn't run.</div>
+          </div>
+        </div>
+        <div class="s3-annos">
+          <div class="s3-anno green">
+            <div class="at">Why these six?</div>
+            <div class="ab">These are all things the LLM needs to choose based on what the user says. Capturing an email, resetting flags on retry, setting a case type — all depend on the conversation going in a particular direction.</div>
+          </div>
+          <div class="s3-anno" style="background:#FAEEDA;border-left:3px solid #BA7517;margin-top:8px">
+            <div class="at" style="color:#854F0B">Why is OrderDetails_Verify_User excluded?</div>
+            <div class="ab">It is triggered by a script condition — not by an LLM decision. When email is present and Verification_Run is False, the script fires it automatically. The LLM has no say in when or whether it runs.</div>
+          </div>
+          <div class="s3-anno neutral" style="margin-top:8px">
+            <div class="at">The key distinction</div>
+            <div class="ab">Reasoning actions = things the LLM selects.<br>Deterministic calls = things the script triggers.<br>Both can appear in the same topic — but only one type belongs in the actions list.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 4 — STRUCTURE -->
+    <div class="slide" id="s3">
+      <div>
+        <div class="slide-tag">Step 4</div>
+        <div class="slide-title">The structure</div>
+        <div class="slide-sub">The deterministic parts each find their block. The LLM instructions sit in reasoning — plain, undecorated.</div>
+      </div>
+      <div class="s3-grid">
+        <div style="overflow-y:auto">
+          <div class="block">
+            <div class="block-tag bt-det">before_reasoning</div>
+            <div class="block-body"><span class="hl-det">set @variables.workflow_step = "Identify User"</span>
+<span class="hl-det">if @variables.isVerified == True:</span>
+    transition to @subagent.Order_Status</div>
+          </div>
+          <div class="block">
+            <div class="block-tag bt-reason">reasoning instructions</div>
+            <div class="block-body"><span class="hl-det">if @variables.UserEmail == "" and @variables.isVerified == False:</span>
+    Ask for email. Say: "To access order details I will
+    need to verify your identity. Could you please
+    provide your email address?"
+    Extract and use {!@actions.set_email} to save it.
+
+<span class="hl-det">if @variables.UserEmail != "" and @variables.isVerified == False
+    and @variables.Verification_Run == False:</span>
+    <span class="hl-det">run @actions.OrderDetails_Verify_User</span>
+        <span class="hl-det">with UserEmail = @variables.UserEmail</span>
+        <span class="hl-det">set @variables.isVerified = @outputs.Verified_status</span>
+    <span class="hl-det">set @variables.Verification_Run = True</span>
+
+<span class="hl-det">if @variables.isVerified == True:</span>
+    Say: "Great news, I have successfully verified
+    your identity!"
+
+<span class="hl-det">if @variables.isVerified == False:</span>
+    Say: "I'm sorry, I wasn't able to verify your
+    identity. Would you like to try again or create
+    a case?"
+    Try Again → reset email + flags using actions, ask again.
+    Create a case → LLM interprets intent,
+    calls set_CaseType + go_to_Case_Management.</div>
+          </div>
+          <div class="block">
+            <div class="block-tag bt-actions">reasoning actions</div>
+            <div class="block-body">set_email, set_isVerified, set_run_verification
+set_CaseType, go_to_Case_Management, go_to_order_status</div>
+          </div>
+          <div class="block">
+            <div class="block-tag bt-det">after_reasoning</div>
+            <div class="block-body"><span class="hl-det">if @variables.isVerified == True:</span>
+    transition to @subagent.Order_Status</div>
+          </div>
+        </div>
+        <div class="s3-annos">
+          <div class="s3-anno det">
+            <div class="at">before_reasoning — always runs first</div>
+            <div class="ab">Stamps the workflow step for session recovery. Fast-paths users who are already verified — no LLM call needed, straight to Order_Status.</div>
+          </div>
+          <div class="s3-anno det">
+            <div class="at">Highlighted lines — deterministic</div>
+            <div class="ab">Every purple line is a guardrail the system enforces — if conditions, the verification flow call, and variable assignments. The LLM reasons within these, not around them.</div>
+          </div>
+          <div class="s3-anno neutral">
+            <div class="at">Unhighlighted lines — LLM</div>
+            <div class="ab">What to say, how to handle retry, how to interpret the user's intent for case creation — all natural LLM behaviour. No highlighting needed.</div>
+          </div>
+          <div class="s3-anno det">
+            <div class="at">after_reasoning — always runs last</div>
+            <div class="ab">Guarantees the transition to Order_Status fires after the success message — regardless of anything else the LLM said or did.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <span class="key-hint"><kbd>←</kbd> <kbd>→</kbd> to navigate</span>
+    <div class="nav-btns">
+      <button class="nav-btn" id="btnPrev" onclick="step(-1)" disabled>← Previous</button>
+      <button class="nav-btn primary" id="btnNext" onclick="step(1)">Next →</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const pills  = document.querySelectorAll('.pill');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  let cur = 0;
+  function goTo(n) {
+    slides[cur].classList.remove('active'); pills[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, slides.length - 1));
+    slides[cur].classList.add('active'); pills[cur].classList.add('active');
+    btnPrev.disabled = cur === 0;
+    btnNext.textContent = cur === slides.length - 1 ? 'Done' : 'Next →';
+    btnNext.disabled = false;
+    if (cur === 1) setTimeout(drawArrows, 50);
+  }
+  function step(d) { goTo(cur + d); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') step(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   step(-1);
+  });
+  function drawArrows() {
+    const col = document.getElementById('arrowCol');
+    col.innerHTML = '';
+    const leftBlocks = document.querySelectorAll('.code-col .code-block');
+    const rightCards = document.querySelectorAll('.anno-col .anno-card');
+    const colRect = col.getBoundingClientRect();
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '36'); svg.setAttribute('height', colRect.height);
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none';
+    const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+    ['det','llm'].forEach(type => {
+      const marker = document.createElementNS('http://www.w3.org/2000/svg','marker');
+      marker.setAttribute('id','arr-'+type); marker.setAttribute('viewBox','0 0 8 8');
+      marker.setAttribute('refX','7'); marker.setAttribute('refY','4');
+      marker.setAttribute('markerWidth','6'); marker.setAttribute('markerHeight','6');
+      marker.setAttribute('orient','auto');
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d','M1,1 L7,4 L1,7'); p.setAttribute('fill','none');
+      p.setAttribute('stroke', type==='det' ? '#7F77DD' : '#378ADD');
+      p.setAttribute('stroke-width','1.5'); p.setAttribute('stroke-linecap','round');
+      marker.appendChild(p); defs.appendChild(marker);
+    });
+    svg.appendChild(defs);
+    leftBlocks.forEach((lb, i) => {
+      const rc = rightCards[i]; if (!rc) return;
+      const lRect = lb.getBoundingClientRect();
+      const rRect = rc.getBoundingClientRect();
+      const lMid = lRect.top + lRect.height/2 - colRect.top;
+      const rMid = rRect.top + rRect.height/2 - colRect.top;
+      const isDet = lb.classList.contains('det');
+      const color = isDet ? '#7F77DD' : '#378ADD';
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      const cx = 18;
+      path.setAttribute('d',`M4,${lMid} C${cx},${lMid} ${cx},${rMid} 32,${rMid}`);
+      path.setAttribute('fill','none'); path.setAttribute('stroke',color);
+      path.setAttribute('stroke-width','1.5'); path.setAttribute('stroke-dasharray','4 3');
+      path.setAttribute('marker-end',`url(#arr-${isDet?'det':'llm'})`);
+      svg.appendChild(path);
+    });
+    col.style.position = 'relative'; col.appendChild(svg);
+  }
+  window.addEventListener('resize', () => { if (cur === 1) drawArrows(); });
+</script>
+</body>
+</html>

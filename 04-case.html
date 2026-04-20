@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B1F3A; --purple: #7F77DD; --purple-dark: #534AB7; --purple-bg: #EEEDFE;
+    --blue: #185FA5; --blue-bg: #E6F1FB; --green: #3B6D11; --green-bg: #EAF3DE;
+    --accent: #993C1D; --accent-bg: #FAECE7;
+    --bg: #F0F2F7; --card: #FFFFFF; --text: #0B1F3A; --text-2: #4A5568; --text-3: #718096; --border: rgba(0,0,0,0.08);
+  }
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+  .shell { display: grid; grid-template-rows: 60px 1fr 60px; height: 100vh; }
+  header { background: var(--navy); display: flex; align-items: center; padding: 0 2rem; gap: 1.5rem; }
+  .back { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.1); transition: all .15s; }
+  .back:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .page-title { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+  .pills { display: flex; gap: 5px; flex: 1; justify-content: center; }
+  .pill { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .pill:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); }
+  .pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  main { overflow: hidden; position: relative; }
+  .slide { position: absolute; inset: 0; padding: 1.5rem 2rem; display: none; flex-direction: column; gap: 1rem; overflow-y: auto; }
+  .slide.active { display: flex; }
+  .slide-tag { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .slide-title { font-size: 22px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .slide-sub { font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  footer { background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; }
+  .key-hint { font-size: 12px; color: rgba(255,255,255,0.28); }
+  .key-hint kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 1px 6px; font-family: 'DM Mono', monospace; font-size: 11px; }
+  .nav-btns { display: flex; gap: 8px; }
+  .nav-btn { padding: 8px 22px; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65); }
+  .nav-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .nav-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .nav-btn.primary:hover { background: #712B13; }
+  .nav-btn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+  pre { font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .hl-det { background: var(--purple-bg); color: var(--purple-dark); border-radius: 3px; padding: 1px 4px; }
+  .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; }
+  .card-head { padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); background: #F7F8FA; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .card-body { padding: 16px; overflow-y: auto; flex: 1; }
+  .legend { display: flex; gap: 20px; flex-shrink: 0; font-size: 12px; color: var(--text-2); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .dot-det { background: var(--purple-bg); border: 1.5px solid var(--purple-dark); }
+  .dot-llm { background: var(--blue-bg); border: 1.5px solid var(--blue); }
+  .anno-layout { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 0; flex: 1; min-height: 0; align-items: stretch; }
+  .code-col { display: flex; flex-direction: column; }
+  .arrow-col { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .anno-col { display: flex; flex-direction: column; gap: 6px; justify-content: space-around; }
+  .code-block { flex: 1; display: flex; align-items: center; padding: 10px 14px; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.65; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+  .code-block:last-child { margin-bottom: 0; }
+  .code-block.det { background: var(--purple-bg); border-color: #C4B8F8; color: var(--purple-dark); }
+  .code-block.llm { background: var(--blue-bg); border-color: #9AC5F0; color: var(--blue); }
+  .anno-card { flex: 1; padding: 10px 13px; border-radius: 8px; font-size: 12px; line-height: 1.5; margin-bottom: 6px; display: flex; flex-direction: column; justify-content: center; }
+  .anno-card:last-child { margin-bottom: 0; }
+  .anno-card.det { background: var(--purple-bg); border-left: 3px solid var(--purple-dark); }
+  .anno-card.llm { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+  .anno-title { font-weight: 600; font-size: 12px; margin-bottom: 3px; }
+  .anno-card.det .anno-title { color: var(--purple-dark); }
+  .anno-card.llm .anno-title { color: var(--blue); }
+  .anno-body { font-size: 11.5px; color: var(--text-2); }
+  .s3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+  .block { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; }
+  .block:last-child { margin-bottom: 0; }
+  .block-tag { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 7px 14px; }
+  .bt-det { background: var(--purple-bg); color: var(--purple-dark); }
+  .bt-reason { background: #F7F8FA; color: var(--text-3); }
+  .block-body { background: var(--card); padding: 12px 14px; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+  .s3-annos { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .s3-anno { border-radius: 8px; padding: 11px 13px; font-size: 12px; line-height: 1.5; }
+  .s3-anno.det { background: var(--purple-bg); border-left: 3px solid var(--purple-dark); }
+  .s3-anno.neutral { background: #F7F8FA; border-left: 3px solid #D1D5DB; }
+  .s3-anno.coral { background: var(--accent-bg); border-left: 3px solid var(--accent); }
+  .s3-anno .at { font-weight: 600; font-size: 12px; margin-bottom: 3px; }
+  .s3-anno.det .at { color: var(--purple-dark); }
+  .s3-anno.neutral .at { color: var(--text-2); }
+  .s3-anno.coral .at { color: var(--accent); }
+  .s3-anno .ab { font-size: 11.5px; color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <a class="back" href="index.html">← Back</a>
+    <span class="page-title">Case management</span>
+    <div class="pills">
+      <button class="pill active" onclick="goTo(0)">Plain English</button>
+      <button class="pill" onclick="goTo(1)">What goes where</button>
+      <button class="pill" onclick="goTo(2)">Actions</button>
+      <button class="pill" onclick="goTo(3)">The structure</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- STAGE 1 -->
+    <div class="slide active" id="s0">
+      <div>
+        <div class="slide-tag">Step 1</div>
+        <div class="slide-title">Write it as plain English first</div>
+        <div class="slide-sub">This topic handles two completely different journeys — both end in the same place: a case number and a clean reset.</div>
+      </div>
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-head">Case management — plain instructions</div>
+        <div class="card-body">
+          <pre>Your goal is to create a support case and confirm it to the user.
+You will always arrive here knowing what type of case to create.
+
+Two journeys lead here — handle each one correctly:
+
+Journey 1 — Verification issue:
+    The user could not be verified. Create a verification support case
+    using their email address.
+    Once created, say:
+    "Your verification case has been successfully created.
+     Your case number is [case number].
+     A member of our support team will reach out to you shortly."
+
+Journey 2 — Expedite or cancel:
+    The user wants to expedite or cancel an order. Create an
+    expedite/cancel case using the case type, exact order number,
+    and user email.
+    Once created, say:
+    "Your case has been successfully created.
+     Your case number is [case number].
+     A member of our support team will reach out to you shortly."
+
+After either journey:
+    Clear everything — workflow step, case type, all order data,
+    case number, and case status — so the agent is ready
+    for a completely fresh start.</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 2 -->
+    <div class="slide" id="s1">
+      <div>
+        <div class="slide-tag">Step 2</div>
+        <div class="slide-title">What goes where</div>
+        <div class="slide-sub">Almost everything here is deterministic. The case type was set before arriving, so the script knows exactly which flow to run.</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot dot-det"></div> Deterministic — enforced by the system</div>
+        <div class="legend-item"><div class="legend-dot dot-llm"></div> LLM — handled in conversation</div>
+      </div>
+      <div class="anno-layout" style="flex:1;min-height:0">
+        <div class="code-col">
+          <div class="code-block det">Set workflow_step = "Case Management"</div>
+          <div class="code-block det">If CaseType == "verification_issue" [condition]
+→ run CreateVerificationCase with UserEmail
+→ store casenum + casestatus</div>
+          <div class="code-block llm">Tell the user their case number and
+that the team will reach out shortly</div>
+          <div class="code-block det">If CaseType == "Expedite or cancel" [condition]
+→ run CreateExpediteCancelCase
+  with CaseType, ExactOrderNumber, UserEmail
+→ store casestatus + casenum</div>
+          <div class="code-block llm">Tell the user their case number and
+that the team will reach out shortly</div>
+          <div class="code-block det">After reasoning — reset everything:
+workflow_step, CaseType, InputOrderNumber,
+ExactOrderNumber, OrderDetails,
+casenum, casestatus</div>
+        </div>
+        <div class="arrow-col" id="arrowCol"></div>
+        <div class="anno-col">
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — before reasoning</div>
+            <div class="anno-body">Stamps the workflow step for session recovery before anything else runs.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — run the right flow</div>
+            <div class="anno-body">CaseType was set by the topic that transferred here. The condition fires the correct case flow automatically — the LLM does not choose which one to run.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM — confirm to the user</div>
+            <div class="anno-body">The confirmation message is conversational. The LLM delivers it using the case number stored in the variable.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — run the right flow</div>
+            <div class="anno-body">Same pattern — CaseType drives the condition, the script fires CreateExpediteCancelCase with all required inputs automatically.</div>
+          </div>
+          <div class="anno-card llm">
+            <div class="anno-title">LLM — confirm to the user</div>
+            <div class="anno-body">Same confirmation pattern — the LLM delivers the case number and closing message.</div>
+          </div>
+          <div class="anno-card det">
+            <div class="anno-title">Deterministic — full reset in after_reasoning</div>
+            <div class="anno-body">Seven variables are cleared automatically after the LLM responds. No data from this session bleeds into the next conversation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3 — ACTIONS -->
+    <div class="slide" id="s2">
+      <div>
+        <div class="slide-tag">Step 3</div>
+        <div class="slide-title">Actions</div>
+        <div class="slide-sub">This is the most deterministic topic in the agent — there are no reasoning actions at all.</div>
+      </div>
+      <div class="s3-grid">
+        <div style="overflow-y:auto">
+          <div class="block">
+            <div class="block-tag" style="background:#FAEEDA;color:#854F0B;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;">No reasoning actions</div>
+            <div class="block-body" style="color:#854F0B">This topic has no actions available to the LLM.
+
+The LLM does not select anything here.
+It receives the case details and delivers
+the confirmation message — that is all.</div>
+          </div>
+          <div class="block" style="margin-top:10px">
+            <div class="block-tag" style="background:#EEEDFE;color:#534AB7;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;">Topic-level actions (script-triggered)</div>
+            <div class="block-body">OrderDetails_CreateVerificationCase
+    → triggered when CaseType == "verification_issue"
+    → input: UserEmail
+    → output: CaseNum, CaseStatus
+
+OrderDetails_CreateExpediteCancelCase
+    → triggered when CaseType == "Expedite or cancel"
+    → inputs: Case_reason, Order_num, User_email
+    → outputs: CaseCreatedStatus, Case_num</div>
+          </div>
+        </div>
+        <div class="s3-annos">
+          <div class="s3-anno coral">
+            <div class="at">Why no reasoning actions?</div>
+            <div class="ab">By the time the conversation reaches this topic, all decisions have already been made. CaseType is set, ExactOrderNumber is set, UserEmail is set. The script just runs the right flow — there is nothing left for the LLM to choose.</div>
+          </div>
+          <div class="s3-anno det" style="margin-top:8px">
+            <div class="at">Both flows are deterministic</div>
+            <div class="ab">Each case flow fires because a script condition checks CaseType. The LLM cannot trigger them, reorder them, or skip them. They are fully outside LLM control.</div>
+          </div>
+          <div class="s3-anno neutral" style="margin-top:8px">
+            <div class="at">The LLM's only job here</div>
+            <div class="ab">Deliver the confirmation message with the case number. Everything else — which flow runs, what inputs are passed, what gets reset — is handled entirely by the script.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 4 — STRUCTURE -->
+    <div class="slide" id="s3">
+      <div>
+        <div class="slide-tag">Step 4</div>
+        <div class="slide-title">The structure</div>
+        <div class="slide-sub">The most deterministic topic in the agent — before_reasoning stamps the step, reasoning runs the flows, after_reasoning resets everything.</div>
+      </div>
+      <div class="s3-grid">
+        <div style="overflow-y:auto">
+          <div class="block">
+            <div class="block-tag bt-det">before_reasoning</div>
+            <div class="block-body"><span class="hl-det">set @variables.workflow_step = "Case Management"</span></div>
+          </div>
+          <div class="block">
+            <div class="block-tag bt-reason">reasoning instructions</div>
+            <div class="block-body"><span class="hl-det">if @variables.CaseType == "verification_issue":</span>
+    <span class="hl-det">run @actions.OrderDetails_CreateVerificationCase</span>
+        <span class="hl-det">with user_email = @variables.UserEmail</span>
+        <span class="hl-det">set @variables.casenum = @outputs.CaseNum</span>
+        <span class="hl-det">set @variables.casestatus = @outputs.CaseStatus</span>
+    Say: "Your verification case has been successfully
+    created. Your case number is {!@variables.casenum}.
+    A member of our support team will reach out shortly."
+
+<span class="hl-det">if @variables.CaseType == "Expedite or cancel":</span>
+    <span class="hl-det">run @actions.OrderDetails_CreateExpediteCancelCase</span>
+        <span class="hl-det">with Case_reason = @variables.CaseType</span>
+        <span class="hl-det">with Order_num = @variables.ExactOrderNumber</span>
+        <span class="hl-det">with User_email = @variables.UserEmail</span>
+        <span class="hl-det">set @variables.casestatus = @outputs.CaseCreatedStatus</span>
+        <span class="hl-det">set @variables.casenum = @outputs.Case_num</span>
+    Say: "Your case has been successfully created.
+    Your case number is {!@variables.casenum}.
+    A member of our support team will reach out shortly."</div>
+          </div>
+          <div class="block">
+            <div class="block-tag bt-det">after_reasoning — resets 7 variables</div>
+            <div class="block-body"><span class="hl-det">set @variables.workflow_step = ""</span>
+<span class="hl-det">set @variables.CaseType = ""</span>
+<span class="hl-det">set @variables.InputOrderNumber = ""</span>
+<span class="hl-det">set @variables.ExactOrderNumber = ""</span>
+<span class="hl-det">set @variables.OrderDetails = ""</span>
+<span class="hl-det">set @variables.casenum = ""</span>
+<span class="hl-det">set @variables.casestatus = ""</span></div>
+          </div>
+        </div>
+        <div class="s3-annos">
+          <div class="s3-anno det">
+            <div class="at">before_reasoning — stamps the step</div>
+            <div class="ab">Sets workflow_step = "Case Management" so the topic selector can resume if interrupted mid-case-creation.</div>
+          </div>
+          <div class="s3-anno det">
+            <div class="at">Everything is highlighted</div>
+            <div class="ab">Both if conditions, both case flow calls, all input bindings, and all output captures are deterministic. The only unhighlighted lines are the two confirmation messages — those are LLM.</div>
+          </div>
+          <div class="s3-anno neutral">
+            <div class="at">The two confirmation messages — LLM</div>
+            <div class="ab">Delivering the case number to the user is conversational. The LLM reads the stored casenum variable and presents it in the message.</div>
+          </div>
+          <div class="s3-anno det">
+            <div class="at">after_reasoning — guaranteed full reset</div>
+            <div class="ab">All seven variables are cleared automatically after the LLM delivers its confirmation. This is the only topic that fully clears everything — it owns the clean exit for the entire agent.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <span class="key-hint"><kbd>←</kbd> <kbd>→</kbd> to navigate</span>
+    <div class="nav-btns">
+      <button class="nav-btn" id="btnPrev" onclick="step(-1)" disabled>← Previous</button>
+      <button class="nav-btn primary" id="btnNext" onclick="step(1)">Next →</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const pills  = document.querySelectorAll('.pill');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  let cur = 0;
+  function goTo(n) {
+    slides[cur].classList.remove('active'); pills[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, slides.length - 1));
+    slides[cur].classList.add('active'); pills[cur].classList.add('active');
+    btnPrev.disabled = cur === 0;
+    btnNext.textContent = cur === slides.length - 1 ? 'Done' : 'Next →';
+    if (cur === 1) setTimeout(drawArrows, 50);
+  }
+  function step(d) { goTo(cur + d); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') step(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   step(-1);
+  });
+  function drawArrows() {
+    const col = document.getElementById('arrowCol');
+    col.innerHTML = '';
+    const leftBlocks = document.querySelectorAll('.code-col .code-block');
+    const rightCards = document.querySelectorAll('.anno-col .anno-card');
+    const colRect = col.getBoundingClientRect();
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '36'); svg.setAttribute('height', colRect.height);
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none';
+    const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+    ['det','llm'].forEach(type => {
+      const marker = document.createElementNS('http://www.w3.org/2000/svg','marker');
+      marker.setAttribute('id','arr-'+type); marker.setAttribute('viewBox','0 0 8 8');
+      marker.setAttribute('refX','7'); marker.setAttribute('refY','4');
+      marker.setAttribute('markerWidth','6'); marker.setAttribute('markerHeight','6');
+      marker.setAttribute('orient','auto');
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d','M1,1 L7,4 L1,7'); p.setAttribute('fill','none');
+      p.setAttribute('stroke', type==='det' ? '#7F77DD' : '#378ADD');
+      p.setAttribute('stroke-width','1.5'); p.setAttribute('stroke-linecap','round');
+      marker.appendChild(p); defs.appendChild(marker);
+    });
+    svg.appendChild(defs);
+    leftBlocks.forEach((lb, i) => {
+      const rc = rightCards[i]; if (!rc) return;
+      const lRect = lb.getBoundingClientRect();
+      const rRect = rc.getBoundingClientRect();
+      const lMid = lRect.top + lRect.height/2 - colRect.top;
+      const rMid = rRect.top + rRect.height/2 - colRect.top;
+      const isDet = lb.classList.contains('det');
+      const color = isDet ? '#7F77DD' : '#378ADD';
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',`M4,${lMid} C18,${lMid} 18,${rMid} 32,${rMid}`);
+      path.setAttribute('fill','none'); path.setAttribute('stroke',color);
+      path.setAttribute('stroke-width','1.5'); path.setAttribute('stroke-dasharray','4 3');
+      path.setAttribute('marker-end',`url(#arr-${isDet?'det':'llm'})`);
+      svg.appendChild(path);
+    });
+    col.style.position = 'relative'; col.appendChild(svg);
+  }
+  window.addEventListener('resize', () => { if (cur === 1) drawArrows(); });
+</script>
+</body>
+</html>
