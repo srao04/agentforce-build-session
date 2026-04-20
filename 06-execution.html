@@ -36,32 +36,40 @@ header { background: var(--navy); display: flex; align-items: center; padding: 0
 .step-label { font-size: 11px; color: rgba(255,255,255,0.4); white-space: nowrap; min-width: 60px; text-align: right; }
 
 /* Main split */
-main { display: grid; grid-template-columns: 300px 1fr; overflow: hidden; }
+main { display: grid; grid-template-columns: 168px 1fr; overflow: hidden; }
 
-/* Left — flowchart */
-.flow-panel { background: var(--card); border-right: 1px solid var(--border); overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 0; }
-.flow-hint { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 12px; text-align: center; }
+/* Left — topic tracker */
+.flow-panel { background: var(--card); border-right: 1px solid var(--border); overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 0; }
+.flow-hint { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 14px; }
 
-.fnode { border-radius: 8px; padding: 8px 12px; text-align: center; font-size: 11px; font-weight: 500; border: 2px solid transparent; cursor: default; transition: all .3s; width: 140px; }
-.fnode sub { font-size: 10px; font-weight: 400; display: block; opacity: .7; margin-top: 2px; }
-.fn-gray  { background: #F7F8FA; border-color: #E5E7EB; color: #6B7280; }
-.fn-purple{ background: var(--purple-bg); border-color: #C4B8F8; color: var(--purple-dark); }
-.fn-amber { background: var(--amber-bg); border-color: #F9C67A; color: var(--amber); }
-.fn-green { background: var(--green-bg); border-color: #A8D572; color: var(--green); }
-.fn-coral { background: var(--coral-bg); border-color: #F0997B; color: var(--coral); }
-.fn-teal  { background: var(--teal-bg); border-color: #5DCAA5; color: var(--teal); }
+.tnode { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; color: var(--text-3); transition: all .3s; border: 1.5px solid transparent; margin-bottom: 4px; }
+.tnode sub { font-size: 10px; font-weight: 400; display: block; color: var(--text-3); margin-top: 1px; line-height: 1.2; }
+.tnode-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: #E5E7EB; transition: all .3s; }
 
-.fnode.lit { border-color: currentColor !important; box-shadow: 0 0 0 3px rgba(127,119,221,0.25); transform: scale(1.04); z-index: 2; position: relative; }
-.fnode.fn-amber.lit { box-shadow: 0 0 0 3px rgba(186,117,23,0.25); }
-.fnode.fn-green.lit { box-shadow: 0 0 0 3px rgba(59,109,17,0.25); }
-.fnode.fn-coral.lit { box-shadow: 0 0 0 3px rgba(216,90,48,0.25); }
-.fnode.fn-teal.lit  { box-shadow: 0 0 0 3px rgba(29,158,117,0.25); }
+.tnode.lit { border-color: currentColor; }
+.tnode.lit .tnode-name { font-weight: 600; }
 
-.arr { display: flex; align-items: center; justify-content: center; height: 16px; color: #CBD5E0; font-size: 14px; }
-.arr-lbl { font-size: 9px; color: #9CA3AF; font-style: italic; text-align: center; margin: 1px 0; }
-.branches { display: flex; gap: 6px; align-items: flex-start; width: 100%; justify-content: center; }
-.branch { display: flex; flex-direction: column; align-items: center; gap: 0; }
-.b-lbl { font-size: 9px; color: #9CA3AF; font-style: italic; margin-bottom: 2px; }
+.tnode-purple .tnode-dot { background: #C4B8F8; }
+.tnode-amber  .tnode-dot { background: #F9C67A; }
+.tnode-green  .tnode-dot { background: #A8D572; }
+.tnode-coral  .tnode-dot { background: #F0997B; }
+.tnode-teal   .tnode-dot { background: #5DCAA5; }
+.tnode-gray   .tnode-dot { background: #D1D5DB; }
+
+.tnode-purple.lit { background: var(--purple-bg); color: var(--purple-dark); border-color: #C4B8F8; }
+.tnode-purple.lit .tnode-dot { background: var(--purple); }
+.tnode-amber.lit  { background: var(--amber-bg);  color: var(--amber);        border-color: #F9C67A; }
+.tnode-amber.lit  .tnode-dot { background: #BA7517; }
+.tnode-green.lit  { background: var(--green-bg);  color: var(--green);        border-color: #A8D572; }
+.tnode-green.lit  .tnode-dot { background: var(--green); }
+.tnode-coral.lit  { background: var(--coral-bg);  color: var(--coral);        border-color: #F0997B; }
+.tnode-coral.lit  .tnode-dot { background: var(--coral); }
+.tnode-teal.lit   { background: var(--teal-bg);   color: var(--teal);         border-color: #5DCAA5; }
+.tnode-teal.lit   .tnode-dot { background: var(--teal); }
+.tnode-gray.lit   { background: #F7F8FA;           color: #374151;             border-color: #D1D5DB; }
+.tnode-gray.lit   .tnode-dot { background: #6B7280; }
+
+.tsep { height: 1px; background: var(--border); margin: 6px 10px 10px; }
 
 /* Right — conversation */
 .conv-panel { display: flex; flex-direction: column; overflow: hidden; }
@@ -122,42 +130,63 @@ footer { background: var(--navy); display: flex; align-items: center; justify-co
 </div>
 
 <main>
-  <!-- LEFT: flowchart -->
+  <!-- LEFT: topic tracker -->
   <div class="flow-panel">
-    <div class="flow-hint">Active topic lights up</div>
+    <div class="flow-hint">Active topic</div>
 
-    <div class="fnode fn-gray" id="fn-start">Session<sub>start</sub></div>
-    <div class="arr">↓</div>
-    <div class="fnode fn-purple" id="fn-router">Agent router<sub>routes every message</sub></div>
+    <div class="tnode tnode-gray" id="fn-start">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Session start</div></div>
+    </div>
 
-    <div class="branches" style="margin-top:6px;width:100%">
-      <div class="branch">
-        <div class="b-lbl">General</div>
-        <div class="fnode fn-teal" id="fn-faq" style="width:110px;font-size:10px">General FAQ<sub>answers directly</sub></div>
-      </div>
-      <div class="branch">
-        <div class="b-lbl">Off topic</div>
-        <div class="fnode fn-gray" id="fn-offtopic" style="width:110px;font-size:10px">Off topic<sub>redirects</sub></div>
-      </div>
-      <div class="branch">
-        <div class="b-lbl">Order</div>
-        <div class="fnode fn-amber" id="fn-verify">Identity check<sub>verify before order</sub></div>
-        <div class="arr">↓</div>
-        <div class="branches" style="width:130px">
-          <div class="branch">
-            <div class="b-lbl" style="font-size:8px">Fail</div>
-            <div class="fnode fn-coral" id="fn-cannotverify" style="width:60px;font-size:9px;padding:6px 4px">Cannot verify</div>
-          </div>
-          <div class="branch">
-            <div class="b-lbl" style="font-size:8px">Pass</div>
-            <div class="fnode fn-green" id="fn-order" style="width:60px;font-size:9px;padding:6px 4px">Order status</div>
-            <div class="arr" style="font-size:11px">↓</div>
-            <div class="fnode fn-coral" id="fn-case" style="width:60px;font-size:9px;padding:6px 4px">Case mgmt</div>
-          </div>
-        </div>
-        <div class="arr">↓</div>
-        <div class="fnode fn-gray" id="fn-end" style="width:130px;font-size:10px">Session ends<sub>all variables cleared</sub></div>
-      </div>
+    <div class="tnode tnode-purple" id="fn-router">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Agent router</div><sub>routes every message</sub></div>
+    </div>
+
+    <div class="tsep"></div>
+
+    <div class="tnode tnode-amber" id="fn-verify">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Identity check</div><sub>verify before order</sub></div>
+    </div>
+
+    <div class="tnode tnode-coral" id="fn-cannotverify">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Cannot verify</div><sub>retry or case</sub></div>
+    </div>
+
+    <div class="tsep"></div>
+
+    <div class="tnode tnode-green" id="fn-order">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Order status</div><sub>lookup + follow-ups</sub></div>
+    </div>
+
+    <div class="tsep"></div>
+
+    <div class="tnode tnode-coral" id="fn-case">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Case management</div><sub>raises + resets</sub></div>
+    </div>
+
+    <div class="tsep"></div>
+
+    <div class="tnode tnode-teal" id="fn-faq">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">General FAQ</div><sub>answers directly</sub></div>
+    </div>
+
+    <div class="tnode tnode-gray" id="fn-offtopic">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Off topic</div><sub>redirects</sub></div>
+    </div>
+
+    <div class="tsep"></div>
+
+    <div class="tnode tnode-gray" id="fn-end">
+      <div class="tnode-dot"></div>
+      <div><div class="tnode-name">Session ends</div><sub>all variables cleared</sub></div>
     </div>
   </div>
 
