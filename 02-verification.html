@@ -171,7 +171,7 @@ Capture what they provide</div>
           <div class="code-block llm">Tell the user: "Great news, I have successfully
 verified your identity!"</div>
           <div class="code-block det">→ transition to Order_Status (guaranteed)</div>
-          <div class="code-block det">If not verified [variable == value check]</div>
+          <div class="code-block det">If not verified AND verification was run [variable == value check]</div>
           <div class="code-block llm">Offer retry or case creation</div>
           <div class="code-block llm">If user says "try again" [LLM interprets intent]
 User could say: "let me try", "try again",
@@ -213,8 +213,8 @@ User could say: "raise a case", "just log it",
             <div class="anno-body">Moving to Order_Status after verification is never an LLM choice. It fires automatically in after_reasoning.</div>
           </div>
           <div class="anno-card det">
-            <div class="anno-title">Two types of if conditions</div>
-            <div class="anno-body">This checks <code>isVerified == False</code> — an exact variable value. These are deterministic: the system evaluates the condition, not the LLM.</div>
+            <div class="anno-title">Two conditions — both must be true</div>
+            <div class="anno-body"><code>isVerified == False</code> AND <code>Verification_Run == True</code>. The second condition is the guardrail — it ensures this block only fires after verification has actually been attempted, not on the first turn before the user has even provided an email.</div>
           </div>
           <div class="anno-card llm">
             <div class="anno-title">LLM — offer the options</div>
@@ -303,7 +303,7 @@ go_to_order_status
             <div class="block-tag bt-det">before_reasoning</div>
             <div class="block-body"><span class="hl-det">set @variables.workflow_step = "Identify User"</span>
 <span class="hl-det">if @variables.isVerified == True:</span>
-    transition to @subagent.Order_Status</div>
+    <span class="hl-det">transition to @subagent.Order_Status</span></div>
           </div>
           <div class="block">
             <div class="block-tag bt-reason">reasoning instructions</div>
@@ -324,7 +324,7 @@ go_to_order_status
     Say: "Great news, I have successfully verified
     your identity!"
 
-<span class="hl-det">if @variables.isVerified == False:</span>
+<span class="hl-det">if @variables.isVerified == False and @variables.Verification_Run == True:</span>
     Say: "I'm sorry, I wasn't able to verify your
     identity. Would you like to try again or create
     a case?"
@@ -340,7 +340,7 @@ set_CaseType, go_to_Case_Management, go_to_order_status</div>
           <div class="block">
             <div class="block-tag bt-det">after_reasoning</div>
             <div class="block-body"><span class="hl-det">if @variables.isVerified == True:</span>
-    transition to @subagent.Order_Status</div>
+    <span class="hl-det">transition to @subagent.Order_Status</span></div>
           </div>
         </div>
         <div class="s3-annos">

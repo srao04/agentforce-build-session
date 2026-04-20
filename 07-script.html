@@ -233,7 +233,7 @@ footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3
                 <span class="kw">set</span> <span class="var">@variables.Verification_Run</span> = <span class="num">True</span>
             <span class="kw">if</span> <span class="var">@variables.isVerified</span> == <span class="num">True</span>:
                 <span class="pipe">|Display the following message to the user : "Great news, I have successfully  verified your identity!"</span>
-            <span class="kw">if</span> <span class="var">@variables.isVerified</span> == <span class="num">False</span>:
+            <span class="kw">if</span> <span class="var">@variables.isVerified</span> == <span class="num">False</span> and <span class="var">@variables.Verification_Run</span> == <span class="num">True</span>:
                 <span class="pipe">|Say: "I'm sorry, I wasn't able to verify your identity with</span>
                 <span class="pipe">|the information provided. Would you like to try again or</span>
                 <span class="pipe">|create a case?"</span>
