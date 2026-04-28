@@ -89,66 +89,66 @@ footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3
       <span class="code-filename">Order_Details_Agent.agentscript</span>
     </div>
     <div class="code-body">
-<pre id="scriptContent"><span class="kw2">system</span>:
-    <span class="kw2">instructions</span>: <span class="str">&quot;You are an AI Agent.&quot;</span>
-    <span class="kw2">messages</span>:
-        <span class="kw2">welcome</span>: |
-            Hi, I&#x27;m Agentforce! I use AI to search trusted sources, and more. Ask me <span class="str">&quot;What else can you do?&quot;</span> to see how I can simplify your workday. How can I help?
-        <span class="kw2">error</span>: <span class="str">&quot;Something went wrong. Try again.&quot;</span>
+<pre id="scriptContent">system:
+    instructions: &quot;You are an AI Agent.&quot;
+    messages:
+        welcome: |
+            Hi, I&#x27;m Agentforce! I use AI to search trusted sources, and more. Ask me &quot;What else can you do?&quot; to see how I can simplify your workday. How can I help?
+        error: &quot;Something went wrong. Try again.&quot;
 
-<span class="kw2">config</span>:
-    <span class="kw2">agent_label</span>: <span class="str">&quot;Order Details Agent&quot;</span>
-    <span class="kw2">developer_name</span>: <span class="str">&quot;Order_Details_Agent&quot;</span>
-    <span class="kw2">agent_type</span>: <span class="str">&quot;AgentforceEmployeeAgent&quot;</span>
-    <span class="kw2">description</span>: &quot;Automate common business tasks and assist users in their flow of work. Agentforce Employee Agent can search knowledge articles and other data sources. Customize it further to meet your employees&#x27; business needs.&quot;
+config:
+    agent_label: &quot;Order Details Agent&quot;
+    developer_name: &quot;Order_Details_Agent&quot;
+    agent_type: &quot;AgentforceEmployeeAgent&quot;
+    description: &quot;Automate common business tasks and assist users in their flow of work. Agentforce Employee Agent can search knowledge articles and other data sources. Customize it further to meet your employees&#x27; business needs.&quot;
 
-<span class="kw2">language</span>:
-    <span class="kw2">default_locale</span>: <span class="str">&quot;en_US&quot;</span>
-    <span class="kw2">additional_locales</span>: <span class="str">&quot;en_GB&quot;</span>
-    <span class="kw2">all_additional_locales</span>: <span class="num">False</span>
+language:
+    default_locale: &quot;en_US&quot;
+    additional_locales: &quot;en_GB&quot;
+    all_additional_locales: False
 
-<span class="kw2">variables</span>:
-    UserEmail: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;UserEmail&quot;</span>
-    isVerified: mutable boolean = <span class="num">False</span>
-        <span class="kw2">label</span>: <span class="str">&quot;isVerified&quot;</span>
-    workflow_step: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;workflow_step&quot;</span>
-    CaseType: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;CaseType&quot;</span>
-    Verification_Run: mutable boolean = <span class="num">False</span>
-        <span class="kw2">label</span>: <span class="str">&quot;Verification_Run&quot;</span>
-    InputOrderNumber: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;InputOrderNumber&quot;</span>
-    ExactOrderNumber: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;ExactOrderNumber&quot;</span>
-    OrderDetails: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;OrderDetails&quot;</span>
-    casenum: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;casenum&quot;</span>
-    casestatus: mutable string = <span class="str">&quot;&quot;</span>
-        <span class="kw2">label</span>: <span class="str">&quot;casestatus&quot;</span>
-        <span class="kw2">description</span>: <span class="str">&quot;&quot;</span>    
+variables:
+    UserEmail: mutable string = &quot;&quot;
+        label: &quot;UserEmail&quot;
+    isVerified: mutable boolean = False
+        label: &quot;isVerified&quot;
+    workflow_step: mutable string = &quot;&quot;
+        label: &quot;workflow_step&quot;
+    CaseType: mutable string = &quot;&quot;
+        label: &quot;CaseType&quot;
+    Verification_Run: mutable boolean = False
+        label: &quot;Verification_Run&quot;
+    InputOrderNumber: mutable string = &quot;&quot;
+        label: &quot;InputOrderNumber&quot;
+    ExactOrderNumber: mutable string = &quot;&quot;
+        label: &quot;ExactOrderNumber&quot;
+    OrderDetails: mutable string = &quot;&quot;
+        label: &quot;OrderDetails&quot;
+    casenum: mutable string = &quot;&quot;
+        label: &quot;casenum&quot;
+    casestatus: mutable string = &quot;&quot;
+        label: &quot;casestatus&quot;
+        description: &quot;&quot;    
 
-<span class="kw2">knowledge</span>:
-    <span class="kw2">rag_feature_config_id</span>: <span class="str">&quot;&quot;</span>
-    <span class="kw2">citations_url</span>: <span class="str">&quot;&quot;</span>
-    <span class="kw2">citations_enabled</span>: <span class="num">False</span>
+knowledge:
+    rag_feature_config_id: &quot;&quot;
+    citations_url: &quot;&quot;
+    citations_enabled: False
 
-<span class="kw">start_agent</span> agent_router:
-    <span class="kw2">label</span>: <span class="str">&quot;Agent Router&quot;</span>
-    <span class="kw2">description</span>: <span class="str">&quot;Welcome the user and determine the appropriate subagent based on user input&quot;</span>
-    <span class="kw2">model_config</span>:
-        <span class="kw2">model</span>: <span class="str">&quot;model://sfdc_ai__DefaultEinsteinHyperClassifier&quot;</span>
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> == <span class="str">&quot;Identify User&quot;</span>:
-                <span class="kw">transition</span> to <span class=<span class="str">"sub"</span>>@subagent.user_verification</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> == <span class="str">&quot;Order Status&quot;</span>:
-                <span class="kw">transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Order_Status</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> == <span class="str">&quot;Case Management&quot;</span>:
-                <span class="kw">transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Case_Management</span>
-            |<span class=<span class="str">"pipe"</span>>You are a customer service assistant. Your job is to</span>
+start_agent agent_router:
+    label: &quot;Agent Router&quot;
+    description: &quot;Welcome the user and determine the appropriate subagent based on user input&quot;
+    model_config:
+        model: &quot;model://sfdc_ai__DefaultEinsteinHyperClassifier&quot;
+    reasoning:
+        instructions: -&gt;
+            if @variables.workflow_step == &quot;Identify User&quot;:
+                transition to @subagent.user_verification
+            if @variables.workflow_step == &quot;Order Status&quot;:
+                transition to @subagent.Order_Status
+            if @variables.workflow_step == &quot;Case Management&quot;:
+                transition to @subagent.Case_Management
+            |You are a customer service assistant. Your job is to
              understand what the user needs and route them to the correct topic.
              Route to General Questions if the user is asking:
              - General questions about company products or technologies
@@ -161,20 +161,20 @@ footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3
              - Anything that requires access to order details
              If the request is unrelated, route to Off Topic.
              Select the best tool to call based on the user&#x27;s intent and conversation history
-        <span class="kw2">actions</span>:
-            go_to_GeneralFAQ: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.GeneralFAQ</span>
-                <span class="kw2">description</span>: <span class="str">&quot;User is asking general questions about the company or its products&quot;</span>
-            go_to_off_topic: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.off_topic</span>
-                <span class="kw2">description</span>: <span class="str">&quot;User is asking something unrelated&quot;</span>
-            go_to_user_verification: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.user_verification</span>
-                <span class="kw2">description</span>: <span class="str">&quot;User wants to look up an order, check order status, expedite or cancel&quot;</span>
+        actions:
+            go_to_GeneralFAQ: @utils.transition to @subagent.GeneralFAQ
+                description: &quot;User is asking general questions about the company or its products&quot;
+            go_to_off_topic: @utils.transition to @subagent.off_topic
+                description: &quot;User is asking something unrelated&quot;
+            go_to_user_verification: @utils.transition to @subagent.user_verification
+                description: &quot;User wants to look up an order, check order status, expedite or cancel&quot;
 
-<span class="kw">subagent</span> GeneralFAQ:
-    <span class="kw2">label</span>: <span class="str">&quot;General FAQ&quot;</span>
-    <span class="kw2">description</span>: &quot;This topic is for helping answer customer&#x27;s questions by searching through the knowledge articles and providing information from those articles. The questions can be about the company and its products, policies or business procedures&quot;
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            |<span class=<span class="str">"pipe"</span>>You are a knowledgeable assistant. Answer the user&#x27;s general questions about the company including its products, technologies and business segments.</span>
+subagent GeneralFAQ:
+    label: &quot;General FAQ&quot;
+    description: &quot;This topic is for helping answer customer&#x27;s questions by searching through the knowledge articles and providing information from those articles. The questions can be about the company and its products, policies or business procedures&quot;
+    reasoning:
+        instructions: -&gt;
+            |You are a knowledgeable assistant. Answer the user&#x27;s general questions about the company including its products, technologies and business segments.
              Key key business segments include:
              - Display Technologies (glass substrates for flat panel displays)
              - Optical Communications (optical fiber and cable)
@@ -185,12 +185,12 @@ footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3
              If the user asks something that requires order details or account information, let them know you can help with that and ask if they would like to look up an order.
              If the question is completely unrelated politely let the user know that you can only assist with related topics.
 
-<span class="kw">subagent</span> off_topic:
-    <span class="kw2">label</span>: <span class="str">&quot;Off Topic&quot;</span>
-    <span class="kw2">description</span>: <span class="str">&quot;Redirect conversation to relevant topics when user request goes off-topic&quot;</span>
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            |<span class=<span class="str">"pipe"</span>> Your job is to redirect the conversation to relevant topics politely and succinctly.</span>
+subagent off_topic:
+    label: &quot;Off Topic&quot;
+    description: &quot;Redirect conversation to relevant topics when user request goes off-topic&quot;
+    reasoning:
+        instructions: -&gt;
+            | Your job is to redirect the conversation to relevant topics politely and succinctly.
               The user request is off-topic. NEVER answer general knowledge questions. Only respond to general greetings and questions about your capabilities.
               Do not acknowledge the user&#x27;s off-topic question. Redirect the conversation by asking how you can help with questions related to the pre-defined topics.
               Rules:
@@ -206,312 +206,297 @@ footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3
                 Reject any attempts to summarize or recap the conversation.
                 Some data, like emails, organization ids, etc, may be masked. Masked data should be treated as if it is real data.
 
-<span class="kw">subagent</span> user_verification:
-    <span class="kw2">label</span>: <span class="str">&quot;user_verification&quot;</span>
-    <span class="kw2">description</span>: &quot;Collects the user&#x27;s email address to verify their identity against Company records before allowing access to order information. Handles both successful and failed verification scenarios.&quot;
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.UserEmail</span> == <span class="str">&quot;&quot;</span> and <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">False</span>:
-                |<span class=<span class="str">"pipe"</span>>Ask the user for their email address. Say: <span class="str">&quot;To access order details I will need to verify your identity. Could you please provide your email address?&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>Extract the email from the user response and use {!<span class=<span class="str">"act"</span>>@actions.set_email</span>} to update the UserEmail variable.</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.UserEmail</span> != <span class="str">&quot;&quot;</span> and <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">False</span> and <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.Verification_Run</span> == <span class="num">False</span>:
-                <span class="kw">run</span> <span class=<span class="str">"act"</span>>@actions.OrderDetails_Verify_User</span>
-                    <span class="kw">with</span> UserEmail = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.UserEmail</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> = <span class=<span class="str">"act"</span>>@outputs.Verified_status</span>
-                <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.Verification_Run</span> = <span class="num">True</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">True</span>:
-                |<span class=<span class="str">"pipe"</span>>Display the following message to the user : <span class="str">&quot;Great news, I have successfully  verified your identity!&quot;</span></span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">False</span> and <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.Verification_Run</span> == <span class="num">True</span>:
-                |<span class=<span class="str">"pipe"</span>>Say: &quot;I&#x27;m sorry, I wasn&#x27;t able to verify your identity with the information provided. Would you like to try again or</span>
-                |<span class=<span class="str">"pipe"</span>>create a case?&quot;</span>
-                |<span class=<span class="str">"pipe"</span>>If user says <span class="str">&quot;Try Again&quot;</span>:</span>
-                |<span class=<span class="str">"pipe"</span>>- Set variable: UserEmail = <span class="str">&quot;&quot;</span> using action {!<span class=<span class="str">"act"</span>>@actions.set_email</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>- Set variable: IsVerified using action {!<span class=<span class="str">"act"</span>>@actions.set_isVerified</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>- Set variable: Run_verification using action {!<span class=<span class="str">"act"</span>>@actions.set_run_verification</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>- Say: &quot;No problem! Let&#x27;s try again. Could you please</span>
-                |<span class=<span class="str">"pipe"</span>>provide your email address?&quot;</span>
-                |<span class=<span class="str">"pipe"</span>>If user says <span class="str">&quot;Create a Case&quot;</span>:</span>
-                |<span class=<span class="str">"pipe"</span>>- Set variable: CaseType = <span class="str">&quot;verification_issue&quot;</span> using {!<span class=<span class="str">"act"</span>>@actions.set_CaseType</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>- Transition to Create Case using {!<span class=<span class="str">"act"</span>>@actions.go_to_Case_Management</span>}</span>
-        <span class="kw2">actions</span>:
-            set_email: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: &quot;Extract and save the user&#x27;s email&quot;
-                <span class="kw">with</span> UserEmail = ...
-            set_isVerified: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the verified variable&quot;</span>
-                <span class="kw">with</span> isVerified = <span class="num">False</span>
-            set_CaseType: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the CaseType variable&quot;</span>
-                <span class="kw">with</span> CaseType = ...
-            go_to_Case_Management: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Case_Management</span>
-                <span class="kw2">description</span>: <span class="str">&quot;use this action to transition to case management&quot;</span>
-            set_run_verification: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;use this function to reset the run verification variable&quot;</span>
-                <span class="kw">with</span> Verification_Run = <span class="num">False</span>
-            go_to_order_status: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Order_Status</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Use this action to transition to order status subagent&quot;</span>
+subagent user_verification:
+    label: &quot;user_verification&quot;
+    description: &quot;Collects the user&#x27;s email address to verify their identity against Company records before allowing access to order information. Handles both successful and failed verification scenarios.&quot;
+    reasoning:
+        instructions: -&gt;
+            if @variables.UserEmail == &quot;&quot; and @variables.isVerified == False:
+                |Ask the user for their email address. Say: &quot;To access order details I will need to verify your identity. Could you please provide your email address?&quot;
+                |Extract the email from the user response and use {!@actions.set_email} to update the UserEmail variable.
+            if @variables.UserEmail != &quot;&quot; and @variables.isVerified == False and @variables.Verification_Run == False:
+                run @actions.OrderDetails_Verify_User
+                    with UserEmail = @variables.UserEmail
+                    set @variables.isVerified = @outputs.Verified_status
+                set @variables.Verification_Run = True
+            if @variables.isVerified == True:
+                |Display the following message to the user : &quot;Great news, I have successfully  verified your identity!&quot;
+            if @variables.isVerified == False and @variables.Verification_Run == True:
+                |Say: &quot;I&#x27;m sorry, I wasn&#x27;t able to verify your identity with the information provided. Would you like to try again or
+                |create a case?&quot;
+                |If user says &quot;Try Again&quot;:
+                |- Set variable: UserEmail = &quot;&quot; using action {!@actions.set_email}
+                |- Set variable: IsVerified using action {!@actions.set_isVerified}
+                |- Set variable: Run_verification using action {!@actions.set_run_verification}
+                |- Say: &quot;No problem! Let&#x27;s try again. Could you please
+                |provide your email address?&quot;
+                |If user says &quot;Create a Case&quot;:
+                |- Set variable: CaseType = &quot;verification_issue&quot; using {!@actions.set_CaseType}
+                |- Transition to Create Case using {!@actions.go_to_Case_Management}
+        actions:
+            set_email: @utils.setVariables
+                description: &quot;Extract and save the user&#x27;s email&quot;
+                with UserEmail = ...
+            set_isVerified: @utils.setVariables
+                description: &quot;Set the verified variable&quot;
+                with isVerified = False
+            set_CaseType: @utils.setVariables
+                description: &quot;Set the CaseType variable&quot;
+                with CaseType = ...
+            go_to_Case_Management: @utils.transition to @subagent.Case_Management
+                description: &quot;use this action to transition to case management&quot;
+            set_run_verification: @utils.setVariables
+                description: &quot;use this function to reset the run verification variable&quot;
+                with Verification_Run = False
+            go_to_order_status: @utils.transition to @subagent.Order_Status
+                description: &quot;Use this action to transition to order status subagent&quot;
     before_reasoning:
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> = <span class="str">&quot;Identify User&quot;</span>
-        <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">True</span>:
-            <span class="kw">transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Order_Status</span>
+        set @variables.workflow_step = &quot;Identify User&quot;
+        if @variables.isVerified == True:
+            transition to @subagent.Order_Status
     after_reasoning:
-        <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.isVerified</span> == <span class="num">True</span>:
-            <span class="kw">transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Order_Status</span>
+        if @variables.isVerified == True:
+            transition to @subagent.Order_Status
 
-
-
-    <span class="kw2">actions</span>:
+    actions:
         OrderDetails_Verify_User:
-            <span class="kw2">description</span>: |
+            description: |
                 Verifies the identity of the user by validating their email address and last name against system records. Returns verification status and user details.
-            <span class="kw2">label</span>: <span class="str">&quot;OrderDetails_Verify_User&quot;</span>
-            <span class="kw2">require_user_confirmation</span>: <span class="num">False</span>
-            <span class="kw2">include_in_progress_indicator</span>: <span class="num">True</span>
-            <span class="kw2">progress_indicator_message</span>: <span class="str">&quot;Verifying your identity, please wait...&quot;</span>
-            <span class="kw2">source</span>: <span class="str">&quot;OrderDetails_Verify_User&quot;</span>
-            <span class="kw2">target</span>: <span class="str">&quot;flow://OrderDetails_Verify_User&quot;</span>
-                                                                                                                                                                                        
-            <span class="kw2">inputs</span>:
-                <span class="str">&quot;UserEmail&quot;</span>: string
-                    <span class="kw2">description</span>: |
+            label: &quot;OrderDetails_Verify_User&quot;
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: &quot;Verifying your identity, please wait...&quot;
+            source: &quot;OrderDetails_Verify_User&quot;
+            target: &quot;flow://OrderDetails_Verify_User&quot;
+            inputs:
+                &quot;UserEmail&quot;: string
+                    description: |
                       The email address provided by the user for identity verification
-                    <span class="kw2">label</span>: <span class="str">&quot;UserEmail&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                                                                                                                                                                                        
-            <span class="kw2">outputs</span>:
-                <span class="str">&quot;Verified_status&quot;</span>: boolean
-                    <span class="kw2">description</span>: |
+                    label: &quot;UserEmail&quot;
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                &quot;Verified_status&quot;: boolean
+                    description: |
                       Returns true if the user identity was successfully verified
-                    <span class="kw2">label</span>: <span class="str">&quot;Verified_status&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
+                    label: &quot;Verified_status&quot;
+                    is_displayable: True
+                    filter_from_agent: False
 
-<span class="kw">subagent</span> Case_Management:
-    <span class="kw2">label</span>: <span class="str">&quot;Case_Management&quot;</span>
-    <span class="kw2">description</span>: <span class="str">&quot;Manages the creation of support cases for verified users. Handles two types of cases — verification issues where the user cannot be identified, and order related requests such as expedite or cancellation. Collects the necessary details, submits the case and presents the case number to the user.&quot;</span>
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.CaseType</span> == <span class="str">&quot;verification_issue&quot;</span>:
-                <span class="kw">run</span> <span class=<span class="str">"act"</span>>@actions.OrderDetails_CreateVerificationCase</span>
-                    <span class="kw">with</span> user_email = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.UserEmail</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casenum</span> = <span class=<span class="str">"act"</span>>@outputs.CaseNum</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casestatus</span> = <span class=<span class="str">"act"</span>>@outputs.CaseStatus</span>
-                |<span class=<span class="str">"pipe"</span>>Say: &quot;Your verification case has been successfully created. Your case number is {!<span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casenum</span>}. A member of our support team will reach out to you shortly.</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.CaseType</span> == <span class="str">&quot;Expedite or cancel&quot;</span>:
-                <span class="kw">run</span> <span class=<span class="str">"act"</span>>@actions.OrderDetails_CreateExpediteCancelCase</span>
-                    <span class="kw">with</span> Case_reason = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.CaseType</span>
-                    <span class="kw">with</span> Order_num = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span>
-                    <span class="kw">with</span> User_email = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.UserEmail</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casestatus</span> = <span class=<span class="str">"act"</span>>@outputs.CaseCreatedStatus</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casenum</span> = <span class=<span class="str">"act"</span>>@outputs.Case_num</span>
-                |<span class=<span class="str">"pipe"</span>>Say: &quot;Your case has been successfully created. Your case number is {!<span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casenum</span>} . A member of our support team will reach out to you shortly.</span>
+subagent Case_Management:
+    label: &quot;Case_Management&quot;
+    description: &quot;Manages the creation of support cases for verified users. Handles two types of cases — verification issues where the user cannot be identified, and order related requests such as expedite or cancellation. Collects the necessary details, submits the case and presents the case number to the user.&quot;
+    reasoning:
+        instructions: -&gt;
+            if @variables.CaseType == &quot;verification_issue&quot;:
+                run @actions.OrderDetails_CreateVerificationCase
+                    with user_email = @variables.UserEmail
+                    set @variables.casenum = @outputs.CaseNum
+                    set @variables.casestatus = @outputs.CaseStatus
+                |Say: &quot;Your verification case has been successfully created. Your case number is {!@variables.casenum}. A member of our support team will reach out to you shortly.
+            if @variables.CaseType == &quot;Expedite or cancel&quot;:
+                run @actions.OrderDetails_CreateExpediteCancelCase
+                    with Case_reason = @variables.CaseType
+                    with Order_num = @variables.ExactOrderNumber
+                    with User_email = @variables.UserEmail
+                    set @variables.casestatus = @outputs.CaseCreatedStatus
+                    set @variables.casenum = @outputs.Case_num
+                |Say: &quot;Your case has been successfully created. Your case number is {!@variables.casenum} . A member of our support team will reach out to you shortly.
     after_reasoning:
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.CaseType</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.InputOrderNumber</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.OrderDetails</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casenum</span> = <span class="str">&quot;&quot;</span>
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.casestatus</span> = <span class="str">&quot;&quot;</span>
+        set @variables.workflow_step = &quot;&quot;
+        set @variables.CaseType = &quot;&quot;
+        set @variables.InputOrderNumber = &quot;&quot;
+        set @variables.ExactOrderNumber = &quot;&quot;
+        set @variables.OrderDetails = &quot;&quot;
+        set @variables.casenum = &quot;&quot;
+        set @variables.casestatus = &quot;&quot;
     before_reasoning:
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> = <span class="str">&quot;Case Management&quot;</span>
+        set @variables.workflow_step = &quot;Case Management&quot;
 
-
-    <span class="kw2">actions</span>:
+    actions:
         OrderDetails_CreateExpediteCancelCase:
-            <span class="kw2">description</span>: |
+            description: |
                 Creates a support case in the system to process an order expedite or cancellation request. Captures the order number, request type and reason for the case.
-            <span class="kw2">label</span>: <span class="str">&quot;OrderDetails_CreateExpediteCancelCase&quot;</span>
-            <span class="kw2">require_user_confirmation</span>: <span class="num">False</span>
-            <span class="kw2">include_in_progress_indicator</span>: <span class="num">True</span>
-            <span class="kw2">progress_indicator_message</span>: <span class="str">&quot;Submitting your case, please wait...&quot;</span>
-            <span class="kw2">source</span>: <span class="str">&quot;OrderDetails_CreateExpediteCancelCase&quot;</span>
-            <span class="kw2">target</span>: <span class="str">&quot;flow://CreateExpediteCancelCase&quot;</span>
-                                                                                                                                                                                
-            <span class="kw2">inputs</span>:
-                <span class="str">&quot;Case_reason&quot;</span>: string
-                    <span class="kw2">description</span>: |
+            label: &quot;OrderDetails_CreateExpediteCancelCase&quot;
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: &quot;Submitting your case, please wait...&quot;
+            source: &quot;OrderDetails_CreateExpediteCancelCase&quot;
+            target: &quot;flow://CreateExpediteCancelCase&quot;
+            inputs:
+                &quot;Case_reason&quot;: string
+                    description: |
                       The reason provided by the user for the expedite or cancellation request
-                    <span class="kw2">label</span>: <span class="str">&quot;Case_reason&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                <span class="str">&quot;Order_num&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;Case_reason&quot;
+                    is_required: True
+                    is_user_input: False
+                &quot;Order_num&quot;: string
+                    description: |
                       The exact order number the expedite or cancel request relates to
-                    <span class="kw2">label</span>: <span class="str">&quot;Order_num&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                <span class="str">&quot;User_email&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;Order_num&quot;
+                    is_required: True
+                    is_user_input: False
+                &quot;User_email&quot;: string
+                    description: |
                       Email of the user initiating the case
-                    <span class="kw2">label</span>: <span class="str">&quot;User_email&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                                                                                                                                                                                
-            <span class="kw2">outputs</span>:
-                <span class="str">&quot;CaseCreatedStatus&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;User_email&quot;
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                &quot;CaseCreatedStatus&quot;: string
+                    description: |
                       Returns true if the case was successfully created in the system
-                    <span class="kw2">label</span>: <span class="str">&quot;CaseCreatedStatus&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
-                <span class="str">&quot;Case_num&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;CaseCreatedStatus&quot;
+                    is_displayable: True
+                    filter_from_agent: False
+                &quot;Case_num&quot;: string
+                    description: |
                       The unique case number generated for the expedite or cancel request
-                    <span class="kw2">label</span>: <span class="str">&quot;Case_num&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
+                    label: &quot;Case_num&quot;
+                    is_displayable: True
+                    filter_from_agent: False
         OrderDetails_CreateVerificationCase:
-            <span class="kw2">description</span>: |
+            description: |
                 Creates a support case in the system when a user cannot be verified. Captures the user details and issue description so the support team can follow up.
-            <span class="kw2">label</span>: <span class="str">&quot;OrderDetails_CreateVerificationCase&quot;</span>
-            <span class="kw2">require_user_confirmation</span>: <span class="num">False</span>
-            <span class="kw2">include_in_progress_indicator</span>: <span class="num">True</span>
-            <span class="kw2">progress_indicator_message</span>: <span class="str">&quot;Creating your verification support case...&quot;</span>
-            <span class="kw2">source</span>: <span class="str">&quot;OrderDetails_CreateVerificationCase&quot;</span>
-            <span class="kw2">target</span>: <span class="str">&quot;flow://OrderDetails_CreateVerificationCase&quot;</span>
-                                                                                                                                                                                
-            <span class="kw2">inputs</span>:
-                <span class="str">&quot;user_email&quot;</span>: string
-                    <span class="kw2">description</span>: |
+            label: &quot;OrderDetails_CreateVerificationCase&quot;
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: &quot;Creating your verification support case...&quot;
+            source: &quot;OrderDetails_CreateVerificationCase&quot;
+            target: &quot;flow://OrderDetails_CreateVerificationCase&quot;
+            inputs:
+                &quot;user_email&quot;: string
+                    description: |
                       The user email of the user who failed verification
-                    <span class="kw2">label</span>: <span class="str">&quot;user_email&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                                                                                                                                                                                
-            <span class="kw2">outputs</span>:
-                <span class="str">&quot;CaseNum&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;user_email&quot;
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                &quot;CaseNum&quot;: string
+                    description: |
                       The unique case number generated for the verification issue
-                    <span class="kw2">label</span>: <span class="str">&quot;CaseNum&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
-                <span class="str">&quot;CaseStatus&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;CaseNum&quot;
+                    is_displayable: True
+                    filter_from_agent: False
+                &quot;CaseStatus&quot;: string
+                    description: |
                       Returns true if the case was successfully created in the system
-                    <span class="kw2">label</span>: <span class="str">&quot;CaseStatus&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
+                    label: &quot;CaseStatus&quot;
+                    is_displayable: True
+                    filter_from_agent: False
 
-<span class="kw">subagent</span> Order_Status:
-    <span class="kw2">label</span>: <span class="str">&quot;Order_Status&quot;</span>
-    <span class="kw2">description</span>: <span class="str">&quot;Handles all order related requests for verified users. Collects the order number from the user, runs a helper to retrieve the exact order number, fetches complete order details and presents them. Handles follow up questions about the order and allows the user to request an expedite, cancellation or look up another order.&quot;</span>
-    <span class="kw2">reasoning</span>:
-        <span class="kw2">instructions</span>: -&gt;
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.InputOrderNumber</span> == <span class="str">&quot;&quot;</span>:
-                |<span class=<span class="str">"pipe"</span>>Ask the user for their order number. Say: <span class="str">&quot;Please provide the order number you would like to look up.&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>Extract the order number from the user response and use {!<span class=<span class="str">"act"</span>>@actions.set_InputOrderNumber</span>} to update the InputOrderNumber variable.</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.InputOrderNumber</span> != <span class="str">&quot;&quot;</span> and <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> == <span class="str">&quot;&quot;</span>:
-                <span class="kw">run</span> <span class=<span class="str">"act"</span>>@actions.OrderDetails_GetExactOrderNumber</span>
-                    <span class="kw">with</span> Order_number = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.InputOrderNumber</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> = <span class=<span class="str">"act"</span>>@outputs.Revised_Order_Number</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> == <span class="str">&quot;Order Does Not Exist&quot;</span>:
-                |<span class=<span class="str">"pipe"</span>>say <span class="str">&quot;Order does not exist&quot;</span></span>
-                <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.InputOrderNumber</span> = <span class="str">&quot;&quot;</span>
-                <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> = <span class="str">&quot;&quot;</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span> != <span class="str">&quot;&quot;</span>:
-                <span class="kw">run</span> <span class=<span class="str">"act"</span>>@actions.OrderDetails_GetOrderDetails</span>
-                    <span class="kw">with</span> Order_Number = <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.ExactOrderNumber</span>
-                    <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.OrderDetails</span> = <span class=<span class="str">"act"</span>>@outputs.Order_Details</span>
-                |<span class=<span class="str">"pipe"</span>>Display the full order details to the user exactly as returned</span>
-            <span class="kw">if</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.OrderDetails</span> != <span class="str">&quot;&quot;</span>:
-                |<span class=<span class="str">"pipe"</span>>Say this as is <span class="str">&quot;Please let me know if you have any follow up questions about this order, or if you would like to expedite   your order, cancel your order, or look up another order.&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>Answer any follow up questions the user has using the information in {!<span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.OrderDetails</span>}.</span>
-                |<span class=<span class="str">"pipe"</span>>If the user wants to expedite or cancel the order:</span>
-                |<span class=<span class="str">"pipe"</span>>- use {!<span class=<span class="str">"act"</span>>@actions.set_CaseType</span>} to Set variable: CaseType = <span class="str">&quot;Expedite or cancel&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>- Transition to Case Management topic using {!<span class=<span class="str">"act"</span>>@actions.go_to_Case_Management</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>If the user wants to look up another order:</span>
-                |<span class=<span class="str">"pipe"</span>>- Say: <span class="str">&quot;Sure! Please provide the order number you would like to look up.&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>- reset variables using {!<span class=<span class="str">"act"</span>>@actions.reset_order_variables</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>If the user has nothing more to do:</span>
-                |<span class=<span class="str">"pipe"</span>>- Say: <span class="str">&quot;Let me know if there is anything else I can help you with&quot;</span></span>
-                |<span class=<span class="str">"pipe"</span>>- reset variables using {!<span class=<span class="str">"act"</span>>@actions.reset_order_variables</span>}</span>
-                |<span class=<span class="str">"pipe"</span>>- reset workflow step using {!<span class=<span class="str">"act"</span>>@actions.set_Workflowstep</span>}</span>
-        <span class="kw2">actions</span>:
-            set_InputOrderNumber: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the value of the Input order number variable&quot;</span>
-                <span class="kw">with</span> InputOrderNumber = ...
-            set_ExactOrderNumber: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the value of the ExactOrderNumber&quot;</span>
-                <span class="kw">with</span> ExactOrderNumber = ...
-            set_OrderDetails: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the value of the variables Order Details&quot;</span>
-                <span class="kw">with</span> OrderDetails = ...
-            set_CaseType: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set the CaseType variable&quot;</span>
-                <span class="kw">with</span> CaseType = ...
-            go_to_Case_Management: <span class=<span class="str">"act"</span>>@utils.transition</span> to <span class=<span class="str">"sub"</span>>@subagent.Case_Management</span>
-                <span class="kw2">description</span>: <span class="str">&quot;use this action to transition to case management&quot;</span>
-            reset_order_variables: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Reset order related variables&quot;</span>
-                <span class="kw">with</span> InputOrderNumber = <span class="str">&quot;&quot;</span>
-                <span class="kw">with</span> ExactOrderNumber = <span class="str">&quot;&quot;</span>
-                <span class="kw">with</span> OrderDetails = <span class="str">&quot;&quot;</span>
-            set_Workflowstep: <span class=<span class="str">"act"</span>>@utils.setVariables</span>
-                <span class="kw2">description</span>: <span class="str">&quot;Set workflowstep&quot;</span>
-                <span class="kw">with</span> workflow_step = <span class="str">&quot;&quot;</span>
-            OrderDetails_GetExactOrderNumber: <span class=<span class="str">"act"</span>>@actions.OrderDetails_GetExactOrderNumber</span>
-                <span class="kw">with</span> Order_number = ...
-            OrderDetails_GetOrderDetails: <span class=<span class="str">"act"</span>>@actions.OrderDetails_GetOrderDetails</span>
-                <span class="kw">with</span> Order_Number = ...
+subagent Order_Status:
+    label: &quot;Order_Status&quot;
+    description: &quot;Handles all order related requests for verified users. Collects the order number from the user, runs a helper to retrieve the exact order number, fetches complete order details and presents them. Handles follow up questions about the order and allows the user to request an expedite, cancellation or look up another order.&quot;
+    reasoning:
+        instructions: -&gt;
+            if @variables.InputOrderNumber == &quot;&quot;:
+                |Ask the user for their order number. Say: &quot;Please provide the order number you would like to look up.&quot;
+                |Extract the order number from the user response and use {!@actions.set_InputOrderNumber} to update the InputOrderNumber variable.
+            if @variables.InputOrderNumber != &quot;&quot; and @variables.ExactOrderNumber == &quot;&quot;:
+                run @actions.OrderDetails_GetExactOrderNumber
+                    with Order_number = @variables.InputOrderNumber
+                    set @variables.ExactOrderNumber = @outputs.Revised_Order_Number
+            if @variables.ExactOrderNumber == &quot;Order Does Not Exist&quot;:
+                |say &quot;Order does not exist&quot;
+                set @variables.InputOrderNumber = &quot;&quot;
+                set @variables.ExactOrderNumber = &quot;&quot;
+            if @variables.ExactOrderNumber != &quot;&quot;:
+                run @actions.OrderDetails_GetOrderDetails
+                    with Order_Number = @variables.ExactOrderNumber
+                    set @variables.OrderDetails = @outputs.Order_Details
+                |Display the full order details to the user exactly as returned
+            if @variables.OrderDetails != &quot;&quot;:
+                |Say this as is &quot;Please let me know if you have any follow up questions about this order, or if you would like to expedite   your order, cancel your order, or look up another order.&quot;
+                |Answer any follow up questions the user has using the information in {!@variables.OrderDetails}.
+                |If the user wants to expedite or cancel the order:
+                |- use {!@actions.set_CaseType} to Set variable: CaseType = &quot;Expedite or cancel&quot;
+                |- Transition to Case Management topic using {!@actions.go_to_Case_Management}
+                |If the user wants to look up another order:
+                |- Say: &quot;Sure! Please provide the order number you would like to look up.&quot;
+                |- reset variables using {!@actions.reset_order_variables}
+                |If the user has nothing more to do:
+                |- Say: &quot;Let me know if there is anything else I can help you with&quot;
+                |- reset variables using {!@actions.reset_order_variables}
+                |- reset workflow step using {!@actions.set_Workflowstep}
+        actions:
+            set_InputOrderNumber: @utils.setVariables
+                description: &quot;Set the value of the Input order number variable&quot;
+                with InputOrderNumber = ...
+            set_ExactOrderNumber: @utils.setVariables
+                description: &quot;Set the value of the ExactOrderNumber&quot;
+                with ExactOrderNumber = ...
+            set_OrderDetails: @utils.setVariables
+                description: &quot;Set the value of the variables Order Details&quot;
+                with OrderDetails = ...
+            set_CaseType: @utils.setVariables
+                description: &quot;Set the CaseType variable&quot;
+                with CaseType = ...
+            go_to_Case_Management: @utils.transition to @subagent.Case_Management
+                description: &quot;use this action to transition to case management&quot;
+            reset_order_variables: @utils.setVariables
+                description: &quot;Reset order related variables&quot;
+                with InputOrderNumber = &quot;&quot;
+                with ExactOrderNumber = &quot;&quot;
+                with OrderDetails = &quot;&quot;
+            set_Workflowstep: @utils.setVariables
+                description: &quot;Set workflowstep&quot;
+                with workflow_step = &quot;&quot;
+            OrderDetails_GetExactOrderNumber: @actions.OrderDetails_GetExactOrderNumber
+                with Order_number = ...
+            OrderDetails_GetOrderDetails: @actions.OrderDetails_GetOrderDetails
+                with Order_Number = ...
     before_reasoning:
-        <span class="kw">set</span> <span class=<span class="str">"act"</span>><span class=<span class="str">"act"</span>>@variables</span>.workflow_step</span> = <span class="str">&quot;Order Status&quot;</span>
+        set @variables.workflow_step = &quot;Order Status&quot;
 
-
-
-    <span class="kw2">actions</span>:
+    actions:
         OrderDetails_GetOrderDetails:
-            <span class="kw2">description</span>: |
+            description: |
                 Retrieves complete order information for a given order number including order header, line items, pricing, shipping status and tracking details.
-            <span class="kw2">label</span>: <span class="str">&quot;OrderDetails_GetOrderDetails&quot;</span>
-            <span class="kw2">require_user_confirmation</span>: <span class="num">False</span>
-            <span class="kw2">include_in_progress_indicator</span>: <span class="num">True</span>
-            <span class="kw2">progress_indicator_message</span>: <span class="str">&quot;Retrieving your order details, please wait...&quot;</span>
-            <span class="kw2">source</span>: <span class="str">&quot;OrderDetails_GetOrderDetails&quot;</span>
-            <span class="kw2">target</span>: <span class="str">&quot;flow://OrderDetails_GetOrderDetails&quot;</span>
-                                                                                                                                                                                                                                                                                                                                        
-            <span class="kw2">inputs</span>:
-                <span class="str">&quot;Order_Number&quot;</span>: string
-                    <span class="kw2">description</span>: |
+            label: &quot;OrderDetails_GetOrderDetails&quot;
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: &quot;Retrieving your order details, please wait...&quot;
+            source: &quot;OrderDetails_GetOrderDetails&quot;
+            target: &quot;flow://OrderDetails_GetOrderDetails&quot;
+            inputs:
+                &quot;Order_Number&quot;: string
+                    description: |
                       The exact full order number to retrieve details for
-                    <span class="kw2">label</span>: <span class="str">&quot;Order_Number&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                                                                                                                                                                                                                                                                                                                                        
-            <span class="kw2">outputs</span>:
-                <span class="str">&quot;Order_Details&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;Order_Number&quot;
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                &quot;Order_Details&quot;: string
+                    description: |
                       Full order information including line items, pricing, status and shipment details
-                    <span class="kw2">label</span>: <span class="str">&quot;Order_Details&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span>
+                    label: &quot;Order_Details&quot;
+                    is_displayable: True
+                    filter_from_agent: False
 
         OrderDetails_GetExactOrderNumber:
-            <span class="kw2">description</span>: |
+            description: |
                 Takes a partial or short-form order number entered by the user and returns the exact full order number used in the system.
-            <span class="kw2">label</span>: <span class="str">&quot;OrderDetails_GetExactOrderNumber&quot;</span>
-            <span class="kw2">require_user_confirmation</span>: <span class="num">False</span>
-            <span class="kw2">include_in_progress_indicator</span>: <span class="num">True</span>
-            <span class="kw2">progress_indicator_message</span>: <span class="str">&quot;Looking up your order number...&quot;</span>
-            <span class="kw2">source</span>: <span class="str">&quot;OrderDetails_GetExactOrderNumber&quot;</span>
-            <span class="kw2">target</span>: <span class="str">&quot;flow://OrderDetails_GetExactOrderNumber&quot;</span>
-                                                                                                                                                                                                                                                                                                                                        
-            <span class="kw2">inputs</span>:
-                <span class="str">&quot;Order_number&quot;</span>: string
-                    <span class="kw2">description</span>: |
+            label: &quot;OrderDetails_GetExactOrderNumber&quot;
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: &quot;Looking up your order number...&quot;
+            source: &quot;OrderDetails_GetExactOrderNumber&quot;
+            target: &quot;flow://OrderDetails_GetExactOrderNumber&quot;
+            inputs:
+                &quot;Order_number&quot;: string
+                    description: |
                       The raw order number as entered by the user
-                    <span class="kw2">label</span>: <span class="str">&quot;Order_number&quot;</span>
-                    <span class="kw2">is_required</span>: <span class="num">True</span>
-                    <span class="kw2">is_user_input</span>: <span class="num">False</span>
-                                                                                                                                                                                                                                                                                                                                        
-            <span class="kw2">outputs</span>:
-                <span class="str">&quot;Revised_Order_Number&quot;</span>: string
-                    <span class="kw2">description</span>: |
+                    label: &quot;Order_number&quot;
+                    is_required: True
+                    is_user_input: False
+            outputs:
+                &quot;Revised_Order_Number&quot;: string
+                    description: |
                       The full standardized order number retrieved from the system
-                    <span class="kw2">label</span>: <span class="str">&quot;Revised_Order_Number&quot;</span>
-                    <span class="kw2">is_displayable</span>: <span class="num">True</span>
-                    <span class="kw2">filter_from_agent</span>: <span class="num">False</span></pre>
+                    label: &quot;Revised_Order_Number&quot;
+                    is_displayable: True
+                    filter_from_agent: False</pre>
     </div>
   </div>
 </div>
