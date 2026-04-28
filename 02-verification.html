@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Identity Check</title>
+<title>User Verification</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -94,12 +94,13 @@
 <div class="shell">
   <header>
     <a class="back" href="index.html">← Back</a>
-    <span class="page-title">Identity check</span>
+    <span class="page-title">User verification</span>
     <div class="pills">
       <button class="pill active" onclick="goTo(0)">Plain English</button>
       <button class="pill" onclick="goTo(1)">What goes where</button>
-      <button class="pill" onclick="goTo(2)">Actions</button>
-      <button class="pill" onclick="goTo(3)">The structure</button>
+      <button class="pill" onclick="goTo(2)">Variables</button>
+      <button class="pill" onclick="goTo(3)">Actions</button>
+      <button class="pill" onclick="goTo(4)">The structure</button>
     </div>
   </header>
 
@@ -113,7 +114,7 @@
         <div class="slide-sub">Forget variables, conditions, and actions. Describe what this topic should do — in plain language, in order.</div>
       </div>
       <div class="card" style="flex:1;min-height:0">
-        <div class="card-head">Identity check — plain instructions</div>
+        <div class="card-head">User verification — plain instructions</div>
         <div class="card-body">
           <pre>Your goal is to verify the user's identity before allowing access to order information.
 
@@ -232,8 +233,60 @@ User could say: "raise a case", "just log it",
       </div>
     </div>
 
-    <!-- STAGE 3 — ACTIONS -->
+    <!-- STAGE VARIABLES -->
     <div class="slide" id="s2">
+      <div>
+        <div class="slide-tag">Variables</div>
+        <div class="slide-title">Variables</div>
+        <div class="slide-sub">Every piece of state this topic needs — where it comes from, what it controls, and when it gets reset.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:auto">
+        <div class="card" style="flex:1;min-height:0;overflow:auto">
+          <div class="card-head" style="background:#EEEDFE;color:#534AB7;border-bottom:1px solid #C4B8F8">Variables this topic reads &amp; writes</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F7F8FA;border-bottom:1px solid var(--border)">
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Name</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Type</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">UserEmail</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Email address collected from the user. Starts empty — filled when the LLM calls set_email.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">isVerified</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">Boolean</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set to True if OrderDetails_Verify_User confirms the user. Starts False. Reset to False on retry.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">workflow_step</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set to "Identify User" in before_reasoning. Used by Agent Router to resume this topic if the session is interrupted.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">CaseType</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set to "verification_issue" when the user wants to create a case. Passed to Case_Management on transition.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">Verification_Run</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">Boolean</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Guards the verification action. Starts False. Set to True after the action fires — prevents re-running it on the next LLM turn.</td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- STAGE 3 — ACTIONS -->
+    <div class="slide" id="s3">
       <div>
         <div class="slide-tag">Step 3</div>
         <div class="slide-title">Actions</div>
@@ -291,7 +344,7 @@ go_to_order_status
     </div>
 
     <!-- STAGE 4 — STRUCTURE -->
-    <div class="slide" id="s3">
+    <div class="slide" id="s4">
       <div>
         <div class="slide-tag">Step 4</div>
         <div class="slide-title">The structure</div>

@@ -95,8 +95,9 @@
     <div class="pills">
       <button class="pill active" onclick="goTo(0)">Plain English</button>
       <button class="pill" onclick="goTo(1)">What goes where</button>
-      <button class="pill" onclick="goTo(2)">Actions</button>
-      <button class="pill" onclick="goTo(3)">The structure</button>
+      <button class="pill" onclick="goTo(2)">Variables</button>
+      <button class="pill" onclick="goTo(3)">Actions</button>
+      <button class="pill" onclick="goTo(4)">The structure</button>
     </div>
   </header>
 
@@ -240,8 +241,78 @@ Done → LLM interprets intent
       </div>
     </div>
 
-    <!-- STAGE 3 — ACTIONS -->
+    <!-- STAGE VARIABLES -->
     <div class="slide" id="s2">
+      <div>
+        <div class="slide-tag">Variables</div>
+        <div class="slide-title">Variables</div>
+        <div class="slide-sub">Every piece of state this topic needs — where it comes from, what it controls, and when it gets reset.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:auto">
+        <div class="card" style="flex:1;min-height:0;overflow:auto">
+          <div class="card-head" style="background:#EEEDFE;color:#534AB7;border-bottom:1px solid #C4B8F8">Variables this topic reads &amp; writes</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F7F8FA;border-bottom:1px solid var(--border)">
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Name</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Type</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">InputOrderNumber</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">The raw order number as typed by the user. Passed to OrderDetails_GetExactOrderNumber.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">ExactOrderNumber</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">The standardised full order number returned by the lookup action. Passed to OrderDetails_GetOrderDetails.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">OrderDetails</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">The full order response returned by OrderDetails_GetOrderDetails. Displayed to the user and used for follow-up Q&A.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">workflow_step</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set to "Order Status" in before_reasoning. Lets Agent Router resume this topic if the session is interrupted.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#534AB7;font-weight:500;padding:8px 12px;white-space:nowrap">CaseType</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set to "Expedite or cancel" when the user wants to escalate. Passed to Case_Management on transition.</td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="flex:0 0 auto">
+          <div class="card-head" style="background:#E6F1FB;color:#185FA5;border-bottom:1px solid #9AC5F0">Variables read from other topics (not modified here)</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F7F8FA;border-bottom:1px solid var(--border)">
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Name</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Type</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#185FA5;font-weight:500;padding:8px 12px;white-space:nowrap">UserEmail</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Set by user_verification. Passed to OrderDetails_CreateExpediteCancelCase if the user escalates to a case.</td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- STAGE 3 — ACTIONS -->
+    <div class="slide" id="s3">
       <div>
         <div class="slide-tag">Step 3</div>
         <div class="slide-title">Actions</div>
@@ -301,7 +372,7 @@ OrderDetails_GetOrderDetails
     </div>
 
     <!-- STAGE 4 — STRUCTURE -->
-    <div class="slide" id="s3">
+    <div class="slide" id="s4">
       <div>
         <div class="slide-tag">Step 4</div>
         <div class="slide-title">The structure</div>

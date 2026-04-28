@@ -95,8 +95,9 @@
     <div class="pills">
       <button class="pill active" onclick="goTo(0)">Plain English</button>
       <button class="pill" onclick="goTo(1)">What goes where</button>
-      <button class="pill" onclick="goTo(2)">Actions</button>
-      <button class="pill" onclick="goTo(3)">The structure</button>
+      <button class="pill" onclick="goTo(2)">Variables</button>
+      <button class="pill" onclick="goTo(3)">Actions</button>
+      <button class="pill" onclick="goTo(4)">The structure</button>
     </div>
   </header>
 
@@ -205,8 +206,40 @@ shipping, expedite, cancel)
       </div>
     </div>
 
-    <!-- STAGE 3 — ACTIONS -->
+    <!-- STAGE VARIABLES -->
     <div class="slide" id="s2">
+      <div>
+        <div class="slide-tag">Variables</div>
+        <div class="slide-title">Variables</div>
+        <div class="slide-sub">Every piece of state this topic needs — where it comes from, what it controls, and when it gets reset.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:auto">
+
+        <div class="card" style="flex:0 0 auto">
+          <div class="card-head" style="background:#E6F1FB;color:#185FA5;border-bottom:1px solid #9AC5F0">Variables read from other topics (not modified here)</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#F7F8FA;border-bottom:1px solid var(--border)">
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Name</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Type</th>
+                <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:7px 12px">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:#185FA5;font-weight:500;padding:8px 12px;white-space:nowrap">workflow_step</td>
+            <td style="font-size:12px;color:#718096;padding:8px 12px;white-space:nowrap">String</td>
+            <td style="font-size:11px;padding:8px 12px;color:var(--text-2);line-height:1.5">Read-only here. If set to "Identify User", "Order Status", or "Case Management" the router short-circuits and transitions immediately — no LLM reasoning needed.</td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- STAGE 3 — ACTIONS -->
+    <div class="slide" id="s3">
       <div>
         <div class="slide-tag">Step 3</div>
         <div class="slide-title">Actions</div>
@@ -258,7 +291,7 @@ reads the variable and fires automatically.</div>
     </div>
 
     <!-- STAGE 4 — STRUCTURE -->
-    <div class="slide" id="s3">
+    <div class="slide" id="s4">
       <div>
         <div class="slide-tag">Step 4</div>
         <div class="slide-title">The structure</div>
